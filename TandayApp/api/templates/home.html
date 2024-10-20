@@ -1,28 +1,284 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home - Tanday</title>
+    <title>Tanday Homepage</title>
     <style>
-        body {
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
             font-family: Arial, sans-serif;
-            background-color: #ff69b4;
+        }
+
+        body {
+            background-color: #ffffff;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .logo img {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+        }
+
+        nav {
+            display: flex;
+            align-items: center;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: #5f6368;
+            margin: 0 15px;
+            font-size: 14px;
+        }
+
+        nav a.active {
+            color: #000;
+            font-weight: bold;
+        }
+
+        .search-container {
+            display: flex;
+            align-items: center;
+            background-color: #f1f3f4;
+            border-radius: 24px;
+            padding: 6px 16px;
+            margin: 0 16px;
+        }
+
+        .search-container input {
+            border: none;
+            background-color: transparent;
+            margin-right: 8px;
+            font-size: 14px;
+            width: 200px;
+        }
+
+        .search-icon {
+            color: #8e24aa;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+        }
+
+        .user-info span {
+            margin-right: 16px;
+            font-size: 14px;
+        }
+
+        .icon-menu {
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+            overflow-x: auto;
+            border-bottom: 1px solid #e0e0e0;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .icon-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0 16px;
+        }
+
+        .icon-item img {
+            width: 32px;
+            height: 32px;
+            margin-bottom: 8px;
+        }
+
+        .icon-item span {
+            font-size: 12px;
+            color: #5f6368;
+        }
+
+
+        .filters {
+            text-align: right;
+            padding: 10px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .price-toggle {
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            margin: 0;
+            margin: 20px 0;
+            padding: 10px;
+            border: 1px solid #e0e0e0;
+            border-radius: 100px;
+            width: fit-content;
+            margin-left: auto;
+            margin-right: auto;
         }
-        h1 {
-            color: #000;
+
+        .price-toggle span {
+            font-size: 14px;
+            margin-right: 10px;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 40px;
+            height: 20px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 20px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 2px;
+            bottom: 2px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: #8e24aa;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(20px);
+        }
+
+        .price-info {
+            font-size: 12px;
+            color: #5f6368;
+            margin-left: 10px;
+        }
+
+        .listing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .listing-item img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 8px;
         }
     </style>
 </head>
 <body>
-    <h1>Welcome to Tanday!</h1>
-    <p>You have successfully logged in.</p>
-    <p><a href="{% url 'login' %}">Logout</a></p>
+    <header>
+        <div class="logo">
+            <img src="{% static 'logo.png' %}" alt="Tanday Logo">
+        </div>
+        <nav>
+            <a href="#" class="active">Tanday</a>
+            <a href="#">Tanday karon</a>
+            <a href="#">Tanday unya</a>
+        </nav>
+        <div class="search-container">
+            <input type="text" placeholder="Search...">
+            <span class="search-icon">🔍</span>
+        </div>
+        <div class="user-info">
+            <span>{{ request.user.username }}</span>
+            <span>🌐</span>
+            <span>☰</span>
+            <img src="{% static 'user.png' %}" alt="User Profile" style="width: 32px; height: 32px; border-radius: 50%;">
+        </div>
+    </header>
+
+    <div class="icon-menu">
+        <div class="icon-item">
+            <img src="{% static 'virtual-reality.png' %}" alt="Gaming Room">
+            <span>Gaming Room</span>
+        </div>
+        <div class="icon-item">
+            <img src="{% static 'swimming-pool (1).png' %}" alt="Pool Area">
+            <span>Pool Area</span>
+        </div>
+        <div class="icon-item">
+            <img src="{% static 'sunbed.png' %}" alt="Sunbed">
+            <span>Sunbed</span>
+        </div>
+        <div class="icon-item">
+            <img src="{% static 'cabin.png' %}" alt="Cabin">
+            <span>Cabin</span>
+        </div>
+        <div class="icon-item">
+            <img src="{% static 'canoeing.png' %}" alt="Canoe">
+            <span>Canoe</span>
+        </div>
+        <div class="icon-item">
+            <img src="{% static 'farmland.png' %}" alt="Countryside">
+            <span>Countryside</span>
+        </div>
+        <div class="icon-item">
+            <img src="{% static 'home.png' %}" alt="Home">
+            <span>Home</span>
+        </div>
+        <div class="icon-item">
+            <img src="{% static 'museum.png' %}" alt="Historic">
+            <span>Historic</span>
+        </div>
+        <div class="icon-item">
+            <span>➡️</span>
+        </div>
+    </div>
+
+    <div class="filters">
+        <span>Filters</span>
+    </div>
+
+    <div class="price-toggle">
+        <span>Display Total Price</span>
+        <label class="toggle-switch">
+            <input type="checkbox">
+            <span class="slider"></span>
+        </label>
+        <span class="price-info">includes all fees, before taxes</span>
+    </div>
+
+    <div class="listing-grid">
+        <div class="listing-item">
+            <img src="{% static 'listing1.jpg' %}" alt="Listing 1">
+        </div>
+        <div class="listing-item">
+            <img src="{% static 'listing2.jpg' %}" alt="Listing 2">
+        </div>
+    </div>
 </body>
 </html>
-
