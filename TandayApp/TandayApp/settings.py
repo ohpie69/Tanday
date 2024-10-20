@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'api',  # Ensure your app is listed here
 ]
 
 MIDDLEWARE = [
@@ -115,7 +116,16 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_URL = 'static/'
+# URL to use when referring to static files located in STATIC_ROOT
+STATIC_URL = '/static/'
+
+# Additional directories to look for static files (optional)
+STATICFILES_DIRS = [
+    BASE_DIR / "api/static",
+]
+
+# If you have a static root for production (not needed for development)
+# STATIC_ROOT = BASE_DIR / "staticfiles"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
