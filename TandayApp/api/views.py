@@ -49,3 +49,9 @@ def update_profile_view(request):
     else:
         form = UserUpdateForm(instance=request.user)
     return render(request, 'update_profile.html', {'form': form})
+
+@login_required
+def booking_page(request):
+    return render(request, 'booking.html')
+
+

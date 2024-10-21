@@ -1,0 +1,292 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tanday Karon Booking</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f0f0f0;
+            background-image: radial-gradient(circle at 10% 20%, rgba(216, 241, 230, 0.46) 0%, rgba(233, 226, 226, 0.28) 50.8%, rgba(57, 197, 187, 0.27) 100.2%);
+            color: #333;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-bottom: 1px solid #e0e0e0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(5px);
+        }
+
+        .logo img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+        }
+
+        nav {
+            display: flex;
+            align-items: center;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: #5f6368;
+            margin: 0 15px;
+            font-size: 14px;
+            padding: 5px 10px;
+            border-radius: 20px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        nav a:hover, nav a.active {
+            background-color: #8e24aa;
+            color: #ffffff;
+        }
+
+        .search-container {
+            display: flex;
+            align-items: center;
+            background-color: rgba(241, 243, 244, 0.8);
+            border-radius: 24px;
+            padding: 6px 16px;
+            margin: 0 16px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .search-container input {
+            border: none;
+            background-color: transparent;
+            margin-right: 8px;
+            font-size: 14px;
+            width: 200px;
+        }
+
+        .search-icon {
+            color: #8e24aa;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+        }
+
+        .user-info span {
+            margin-right: 16px;
+            font-size: 14px;
+        }
+
+        .user-info img {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .booking-container {
+            max-width: 800px;
+            margin: 40px auto;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            backdrop-filter: blur(10px);
+        }
+
+        h1 {
+            color: #8e24aa;
+            margin-bottom: 30px;
+            text-align: center;
+            font-size: 28px;
+        }
+
+        .booking-form {
+            display: grid;
+            gap: 25px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            margin-bottom: 8px;
+            color: #5f6368;
+            font-weight: bold;
+        }
+
+        input[type="text"],
+        input[type="date"],
+        input[type="number"] {
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+            background-color: rgba(255, 255, 255, 0.8);
+        }
+
+        input[type="text"]:focus,
+        input[type="date"]:focus,
+        input[type="number"]:focus {
+            border-color: #8e24aa;
+            outline: none;
+        }
+
+        .date-inputs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .room-types {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+        }
+
+        .room-type-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s, border-color 0.3s;
+            background-color: rgba(255, 255, 255, 0.8);
+        }
+
+        .room-type-item:hover {
+            background-color: rgba(240, 240, 240, 0.8);
+        }
+
+        .room-type-item input[type="checkbox"] {
+            margin-right: 10px;
+        }
+
+        button {
+            background-color: #8e24aa;
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: background-color 0.3s, transform 0.3s;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        button:hover {
+            background-color: #6a1b9a;
+            transform: translateY(-2px);
+        }
+
+        .gif-container {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .gif-container img {
+            max-width: 100%;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <img src="{% static 'logo.png' %}" alt="Tanday Logo">
+        </div>
+        <nav>
+            <a href="{% url 'home' %}">Tanday</a>
+            <a href="#" class="active">Tanday karon</a>
+            <a href="#">Tanday unya</a>
+        </nav>
+        <div class="search-container">
+            <input type="text" placeholder="Search...">
+            <span class="search-icon">🔍</span>
+        </div>
+        <div class="user-info">
+            <span>Username</span>
+            <span>🌐</span>
+            <span>☰</span>
+            <img src="{% static 'user.png' %}" alt="User Profile">
+        </div>
+    </header>
+
+    <div class="booking-container">
+        <h1>Book Your Stay at Tanday Karon</h1>
+        <form class="booking-form">
+            <div class="form-group">
+                <label for="name">Full Name</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="text" id="email" name="email" required>
+            </div>
+            <div class="form-group date-inputs">
+                <div>
+                    <label for="check-in">Check-in Date</label>
+                    <input type="date" id="check-in" name="check-in" required>
+                </div>
+                <div>
+                    <label for="check-out">Check-out Date</label>
+                    <input type="date" id="check-out" name="check-out" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="guests">Number of Guests</label>
+                <input type="number" id="guests" name="guests" min="1" required>
+            </div>
+            <div class="form-group">
+                <label>Room Types (Select all that apply)</label>
+                <div class="room-types">
+                    <label class="room-type-item">
+                        <input type="checkbox" name="room_type" value="gaming-room"> Gaming Room
+                    </label>
+                    <label class="room-type-item">
+                        <input type="checkbox" name="room_type" value="pool-area"> Pool Area
+                    </label>
+                    <label class="room-type-item">
+                        <input type="checkbox" name="room_type" value="sunbed"> Sunbed
+                    </label>
+                    <label class="room-type-item">
+                        <input type="checkbox" name="room_type" value="cabin"> Cabin
+                    </label>
+                    <label class="room-type-item">
+                        <input type="checkbox" name="room_type" value="canoe"> Canoe
+                    </label>
+                    <label class="room-type-item">
+                        <input type="checkbox" name="room_type" value="countryside"> Countryside
+                    </label>
+                    <label class="room-type-item">
+                        <input type="checkbox" name="room_type" value="home"> Home
+                    </label>
+                    <label class="room-type-item">
+                        <input type="checkbox" name="room_type" value="historic"> Historic
+                    </label>
+                </div>
+            </div>
+            <button type="submit">Book Now</button>
+        </form>
+        <div class="gif-container">
+            <img src="{% static 'tanday-karon.png' %}" alt="Tanday Karon GIF">
+        </div>
+    </div>
+</body>
+</html>
