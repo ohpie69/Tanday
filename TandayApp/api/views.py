@@ -3,6 +3,7 @@ from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from .forms import UserRegistrationForm, UserUpdateForm
+from django.contrib import messages
 
 # Create your views here.
 
@@ -49,6 +50,34 @@ def register_view(request):
         form = UserRegistrationForm()
     return render(request, 'register.html', {'form': form})
 
+def hotel_registration_view(request):
+    if request.method == "POST":
+        # Get the form data from POST request
+        hotel_name = request.POST.get("hotelName")
+        location = request.POST.get("location")
+        phone = request.POST.get("phone")
+        description = request.POST.get("hotelDescription")
+        owner_name = request.POST.get("ownerName")
+        owner_email = request.POST.get("ownerEmail")
+        owner_phone = request.POST.get("ownerPhone")
+        manager_name = request.POST.get("managerName", "")
+        manager_email = request.POST.get("managerEmail", "")
+        manager_phone = request.POST.get("managerPhone", "")
+        username = request.POST.get("username")
+        password = request.POST.get("password")
+        security_question = request.POST.get("securityQuestion")
+
+        # Process the data (e.g., save it to the database)
+        # Example: You could save this information to a database model
+        # Hotel.objects.create(...)
+
+        messages.success(request, "Registration successful! You can now log in.")
+
+        # Redirect to the login page
+        return redirect('hotel_login')
+
+    # If GET request, render the form
+    return render(request, 'hotel_register.html')
 
 @login_required
 def update_profile_view(request):
