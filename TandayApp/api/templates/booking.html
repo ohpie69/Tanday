@@ -33,7 +33,7 @@
         .logo img {
             width: 40px;
             height: 40px;
-            border-radius: 50%;
+            border-radius: 4px;
         }
 
         nav {
@@ -225,6 +225,9 @@
             <span>🌐</span>
             <span>☰</span>
             <img src="{% static 'user.png' %}" alt="User Profile">
+            <button onclick="location.href='{% url 'logout' %}'">
+                <img src="{% static 'sign-out.png' %}" alt="Log out" style="width: 30px; height: 27px; border-radius: 50%;">
+            </button>
         </div>
     </header>
 
@@ -285,7 +288,7 @@
             <button type="submit">Book Now</button>
         </form>
         <div class="gif-container">
-            <img src="{% static 'tanday-karon.png' %}" alt="Tanday Karon GIF">
+            <img src="{% static '15.gif' %}" alt="Tanday Karon GIF">
         </div>
     </div>
 </body>
