@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from .forms import UserRegistrationForm, UserUpdateForm
@@ -35,9 +35,6 @@ def register_view(request):
         form = UserRegistrationForm()
     return render(request, 'register.html', {'form': form})
 
-@login_required
-def profile_view(request):
-    return render(request, 'profile.html', {'user': request.user})
 
 @login_required
 def update_profile_view(request):
@@ -49,3 +46,12 @@ def update_profile_view(request):
     else:
         form = UserUpdateForm(instance=request.user)
     return render(request, 'update_profile.html', {'form': form})
+
+@login_required
+def booking_page(request):
+    return render(request, 'booking.html')
+
+@login_required
+def logout_view(request):
+    logout(request)
+    return redirect('login')

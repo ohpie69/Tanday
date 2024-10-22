@@ -217,14 +217,10 @@
             <span>{{ request.user.username }}</span>
             <span>🌐</span>
             <span>☰</span>
-            <div class="dropdown">
-                <button class="dropbtn">
-                    <img src="{% static 'user.png' %}" alt="User Profile" style="width: 32px; height: 32px; border-radius: 50%;">
-                </button>
-                <div class="dropdown-content">
-                    <a href="{% url 'login' %}">Logout</a>
-                </div>
-            </div>
+            <img src="{% static 'user.png' %}" alt="User Profile" style="width: 32px; height: 32px; border-radius: 50%; margin-right: 10px;">
+            <button onclick="location.href='{% url 'logout' %}'">
+                <img src="{% static 'sign-out.png' %}" alt="Log out" style="width: 30px; height: 27px; border-radius: 50%;">
+            </button>
         </div>
     </header>
 
