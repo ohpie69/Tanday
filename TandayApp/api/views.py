@@ -19,6 +19,20 @@ def login_view(request):
             return render(request, 'login.html', {'error': error_message})
     return render(request, 'login.html')
 
+
+def hotel_login_view(request):
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(request, username=username, password=password)
+        if user is not None and user.is_hotel:  
+            login(request, user)
+            return redirect('hotel_home')  
+        else:
+            error_message = "Incorrect username or password. Please try again."
+            return render(request, 'hotel_login.html', {'error': error_message})
+    return render(request, 'hotel_login.html')
+
 def home_view(request):
     return render(request, 'home.html')
 
