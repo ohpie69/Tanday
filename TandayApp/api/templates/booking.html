@@ -57,11 +57,10 @@
         .search-container {
             display: flex;
             align-items: center;
-            background-color: rgba(241, 243, 244, 0.8);
+            background-color: #f1f3f4;
             border-radius: 24px;
             padding: 6px 16px;
             margin: 0 16px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         .search-container input {
@@ -227,8 +226,10 @@
     </header>
 
     <div class="booking-container">
-        <h1>Book Your Stay at Tanday Karon</h1>
-        <form class="booking-form">
+        <h1>TANDAY NA!</h1>
+        <form class="booking-form" method="post" action="{% url 'book_now' %}">
+            {% csrf_token %}
+            {{ form.as_p }}
             <div class="form-group">
                 <label for="name">Full Name</label>
                 <input type="text" id="name" name="name" required>

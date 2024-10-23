@@ -3,15 +3,110 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register</title>
+    <title>Sign Up Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        .container {
+            background-color: #FFE9F6;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 450px;
+        }
+        .icon {
+            width: 0.1px;
+            height: 0.1px;
+            background-color: #ff99cc;
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        h1 {
+            margin-left: 35%;
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+        }
+        input {
+            width: 100%;
+            padding: 0.75rem;
+            margin-bottom: 1rem;
+            border: none;
+            border-radius: 0.5rem;
+            box-sizing: border-box;
+        }
+        .name-inputs {
+            display: flex;
+            gap: 1rem;
+        }
+        .name-inputs input {
+            width: 50%;
+        }
+        button {
+            width: 100%;
+            padding: 0.75rem;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+        .signup-btn {
+            background-color: #000;
+            color: #fff;
+        }
+        .facebook-btn {
+            background-color: #4267B2;
+            color: #fff;
+        }
+        .google-btn {
+            background: linear-gradient(to right, #fbbc05, #ea4335);
+            color: #fff;
+        }
+        .divider {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            margin: 1rem 0;
+        }
+        .divider::before, .divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid #000;
+        }
+        .divider span {
+            padding: 0 10px;
+        }
+    </style>
 </head>
 <body>
-    <h1>Register</h1>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Register</button>
-    </form>
-    <p>Already have an account? <a href="{% url 'login' %}">Login here</a></p>
+    {% load static %}
+    <div class="container">
+        <div class="icon">
+            <img src="{% static 'logo.png' %}" width = "50px" height = "50px" style="border-radius: 20%;"  alt="Logo">
+        </div>
+        <h1>Sign Up</h1>
+        <form>
+            <div class="name-inputs">
+                <input type="text" placeholder="First name" required>
+                <input type="text" placeholder="Last name" required>
+            </div>
+            <input type="text" placeholder="Email or Phone Number" required>
+            <input type="password" placeholder="Password" required>
+            <button type="submit" class="signup-btn">SIGN UP</button>
+        </form>
+        <div class="divider"><span>or</span></div>
+        <button class="facebook-btn">Continue with Facebook</button>
+        <button class="google-btn">Continue with Google</button>
+    </div>
 </body>
 </html>

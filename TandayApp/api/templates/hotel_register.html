@@ -1,0 +1,176 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotel Registration</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #ffffcc;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h2 {
+            color: #333;
+            border-bottom: 2px solid #ccc;
+            padding-bottom: 10px;
+        }
+        .form-section {
+            display: none;
+        }
+        .form-section.active {
+            display: block;
+        }
+        input[type="text"], input[type="email"], input[type="password"], textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #000;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        .question-icon {
+            float: right;
+            background-color: #ff69b4;
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 24px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .room-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .room-card {
+            background-color: #f0f0f0;
+            padding: 10px;
+            border-radius: 4px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <form id="registrationForm">
+            <div class="form-section active" id="section1">
+                <h2>I. Hotel Information <span class="question-icon">?</span></h2>
+                <input type="text" id="hotelName" placeholder="Hotel Name" required>
+                <input type="text" id="location" placeholder="Location" required>
+                <input type="text" id="phone" placeholder="+65" required>
+                <textarea id="hotelDescription" placeholder="Hotel Description" required></textarea>
+            </div>
+
+            <div class="form-section" id="section2">
+                <h2>II. Owner / Manager Details <span class="question-icon">?</span></h2>
+                <input type="text" id="ownerName" placeholder="Name" required>
+                <input type="email" id="ownerEmail" placeholder="Email" required>
+                <input type="text" id="ownerPhone" placeholder="+65" required>
+                <h3>Secondary Manager Details (Optional)</h3>
+                <input type="text" id="managerName" placeholder="Name">
+                <input type="email" id="managerEmail" placeholder="Email">
+                <input type="text" id="managerPhone" placeholder="+65">
+            </div>
+
+
+            <div class="form-section" id="section3">
+                <h2>IV. Account and Login Details <span class="question-icon">?</span></h2>
+                <input type="text" id="username" placeholder="Username" required>
+                <input type="password" id="password" placeholder="Password" required>
+                <input type="text" id="securityQuestion" placeholder="Security Question 1" required>
+                <p>Add more security questions?</p>
+            </div>
+
+            <button type="button" id="backBtn" style="display: none;">Back</button>
+            <button type="button" id="continueBtn" disabled>Continue</button>
+        </form>
+    </div>
+
+    <script>
+        let currentSection = 1;
+        const totalSections = 3;
+        const form = document.getElementById('registrationForm');
+        const continueBtn = document.getElementById('continueBtn');
+        const backBtn = document.getElementById('backBtn');
+        const addRoomBtn = document.getElementById('addRoom');
+        const roomGrid = document.getElementById('roomGrid');
+
+        function updateButtons() {
+            backBtn.style.display = currentSection > 1 ? 'inline-block' : 'none';
+            continueBtn.textContent = currentSection === totalSections ? 'Finish' : 'Continue';
+        }
+
+        function showSection(sectionNumber) {
+            document.querySelectorAll('.form-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(`section${sectionNumber}`).classList.add('active');
+            currentSection = sectionNumber;
+            updateButtons();
+            checkFormValidity();
+        }
+
+        function checkFormValidity() {
+            const currentSectionElement = document.getElementById(`section${currentSection}`);
+            const requiredFields = currentSectionElement.querySelectorAll('[required]');
+            const allFilled = Array.from(requiredFields).every(field => field.value.trim() !== '');
+            continueBtn.disabled = !allFilled;
+        }
+
+        continueBtn.addEventListener('click', () => {
+            if (currentSection < totalSections) {
+                showSection(currentSection + 1);
+            } else {
+                alert('Form submitted successfully!');
+                // Here you would typically send the form data to your Django backend
+            }
+        });
+
+        backBtn.addEventListener('click', () => {
+            if (currentSection > 1) {
+                showSection(currentSection - 1);
+            }
+        });
+
+        form.addEventListener('input', checkFormValidity);
+
+        addRoomBtn.addEventListener('click', () => {
+            const roomCard = document.createElement('div');
+            roomCard.className = 'room-card';
+            roomCard.textContent = `Room ${roomGrid.children.length + 1}`;
+            roomGrid.appendChild(roomCard);
+        });
+
+        // Initialize the form
+        showSection(1);
+    </script>
+</body>
+</html>

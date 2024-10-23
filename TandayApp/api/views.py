@@ -1,8 +1,9 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
-from .forms import UserRegistrationForm, UserUpdateForm
+from .forms import UserRegistrationForm, UserUpdateForm, Booking
+from django.contrib import messages
 
 # Create your views here.
 
@@ -19,8 +20,23 @@ def login_view(request):
             return render(request, 'login.html', {'error': error_message})
     return render(request, 'login.html')
 
+
+def hotel_login_view(request):
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(request, username=username, password=password)
+        if user is not None and user.is_hotel:  
+            login(request, user)
+            return redirect('hotel_home')  
+        else:
+            error_message = "Incorrect username or password. Please try again."
+            return render(request, 'hotel_login.html', {'error': error_message})
+    return render(request, 'hotel_login.html')
+
 def home_view(request):
-    return render(request, 'home.html')
+    username = request.session.get('username', 'Guest')  # Get username from session, default to 'Guest'
+    return render(request, 'home.html', {'username': username})
 
 def register_view(request):
     if request.method == 'POST':
@@ -35,9 +51,34 @@ def register_view(request):
         form = UserRegistrationForm()
     return render(request, 'register.html', {'form': form})
 
-@login_required
-def profile_view(request):
-    return render(request, 'profile.html', {'user': request.user})
+def hotel_registration_view(request):
+    if request.method == "POST":
+        # Get the form data from POST request
+        hotel_name = request.POST.get("hotelName")
+        location = request.POST.get("location")
+        phone = request.POST.get("phone")
+        description = request.POST.get("hotelDescription")
+        owner_name = request.POST.get("ownerName")
+        owner_email = request.POST.get("ownerEmail")
+        owner_phone = request.POST.get("ownerPhone")
+        manager_name = request.POST.get("managerName", "")
+        manager_email = request.POST.get("managerEmail", "")
+        manager_phone = request.POST.get("managerPhone", "")
+        username = request.POST.get("username")
+        password = request.POST.get("password")
+        security_question = request.POST.get("securityQuestion")
+
+        # Process the data (e.g., save it to the database)
+        # Example: You could save this information to a database model
+        # Hotel.objects.create(...)
+
+        messages.success(request, "Registration successful! You can now log in.")
+
+        # Redirect to the login page
+        return redirect('hotel_login')
+
+    # If GET request, render the form
+    return render(request, 'hotel_register.html')
 
 @login_required
 def update_profile_view(request):
@@ -54,4 +95,34 @@ def update_profile_view(request):
 def booking_page(request):
     return render(request, 'booking.html')
 
+@login_required
+def logout_view(request):
+    logout(request)
+    return redirect('login')
 
+def book_now(request):
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        email = request.POST.get('email')
+        check_in = request.POST.get('check-in')
+        check_out = request.POST.get('check-out')
+        guests = request.POST.get('guests')
+        room_types = request.POST.getlist('room_type')  # Get list of selected room types
+
+        # Create a new Booking instance
+        booking = Booking(
+            name=name,
+            email=email,
+            check_in=check_in,
+            check_out=check_out,
+            guests=guests,
+            room_types=', '.join(room_types)  # Join room types into a single string
+        )
+        booking.save()  # Save the booking to the database
+
+        return redirect('book_now')  # Redirect to the success page or wherever appropriate
+    else:
+        return render(request, 'booking.html')
+    
+def success(request):
+    return render(request, 'success.html')
