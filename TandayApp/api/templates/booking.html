@@ -1,4 +1,9 @@
 {% load static %}
+{% if error %}
+    <script>
+        alert("{{ error }}");
+    </script>
+{% endif %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -93,7 +98,7 @@
         }
 
         .booking-container {
-            max-width: 800px;
+            max-width: 700px;
             margin: 40px auto;
             background-color: rgba(255, 255, 255, 0.9);
             border-radius: 20px;
@@ -218,7 +223,7 @@
             <span class="search-icon">🔍</span>
         </div>
         <div class="user-info">
-            <span>Username</span>
+            <span>{{ request.user.username }}</span>
             <span>🌐</span>
             <span>☰</span>
             <img src="{% static 'user.png' %}" alt="User Profile">
@@ -284,7 +289,7 @@
             <button type="submit">Book Now</button>
         </form>
         <div class="gif-container">
-            <img src="{% static 'tanday-karon.png' %}" alt="Tanday Karon GIF">
+            <img src="{% static '15.gif' %}" alt="Tanday Karon GIF" style="width: 100px;">
         </div>
     </div>
 </body>

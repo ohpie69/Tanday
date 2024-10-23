@@ -10,7 +10,7 @@ class Booking(models.Model):
     check_in = models.DateField()
     check_out = models.DateField()
     guests = models.IntegerField()
-    room_types = models.TextField(null=True)  # Allow null values
+    room_types = models.TextField(null=True)
 
 
     def __str__(self):

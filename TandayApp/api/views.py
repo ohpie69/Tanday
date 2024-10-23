@@ -107,20 +107,27 @@ def book_now(request):
         check_in = request.POST.get('check-in')
         check_out = request.POST.get('check-out')
         guests = request.POST.get('guests')
-        room_types = request.POST.getlist('room_type')  # Get list of selected room types
+        room_types = request.POST.getlist('room_type') 
 
-        # Create a new Booking instance
+        error_message = None
+
+        if check_out <= check_in:
+            error_message = "Check-out date must be after check-in date."
+
+        if error_message:
+            return render(request, 'booking.html', {'error': error_message})
+
         booking = Booking(
             name=name,
             email=email,
             check_in=check_in,
             check_out=check_out,
             guests=guests,
-            room_types=', '.join(room_types)  # Join room types into a single string
+            room_types=', '.join(room_types) 
         )
-        booking.save()  # Save the booking to the database
+        booking.save() 
 
-        return redirect('book_now')  # Redirect to the success page or wherever appropriate
+        return redirect('success')
     else:
         return render(request, 'booking.html')
     

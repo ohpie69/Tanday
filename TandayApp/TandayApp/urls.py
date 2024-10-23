@@ -26,7 +26,7 @@ urlpatterns = [
      path('hotel_register/', hotel_registration_view, name='hotel_register'),
     path('home/', home_view, name='home'),
     path('booking/', booking_page, name='booking'),
-    path('logout/', logout_view, name='logout'),  # Ensure this line is present
+    path('logout/', logout_view, name='logout'),
     path('success/', success, name='success'),
     path('book_now', book_now, name= 'book_now')
 ]
