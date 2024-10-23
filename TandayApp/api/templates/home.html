@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tanday Homepage</title>
+    <title>Tanday Karon Home</title>
     <style>
         * {
             margin: 0;
@@ -14,21 +14,24 @@
         }
 
         body {
-            background-color: #ffffff;
+            background-color: #f0f0f0;
+            background-image: radial-gradient(circle at 10% 20%, rgba(216, 241, 230, 0.46) 0%, rgba(233, 226, 226, 0.28) 50.8%, rgba(57, 197, 187, 0.27) 100.2%);
+            color: #333;
         }
 
         header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 10px 20px;
+            padding: 22px 20px;
+            background-color: #ffffff;
             border-bottom: 1px solid #e0e0e0;
         }
 
         .logo img {
             width: 40px;
             height: 40px;
-            border-radius: 12px;
+            border-radius: 50%;
         }
 
         nav {
@@ -41,11 +44,14 @@
             color: #5f6368;
             margin: 0 15px;
             font-size: 14px;
+            padding: 5px 10px;
+            border-radius: 20px;
+            transition: background-color 0.3s, color 0.3s;
         }
 
-        nav a.active {
-            color: #000;
-            font-weight: bold;
+        nav a:hover, nav a.active {
+            background-color: #8e24aa;
+            color: #ffffff;
         }
 
         .search-container {
@@ -79,65 +85,119 @@
             font-size: 14px;
         }
 
+        .user-info img {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+        }
+
+        .main-container {
+            max-width: 1200px;
+            margin: 40px auto;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+        }
+
+        h1 {
+            color: #8e24aa;
+            margin-bottom: 30px;
+            text-align: center;
+            font-size: 24px;
+        }
+
+        .featured-listings {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .listing-card {
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .listing-card img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+        }
+
+        .listing-info {
+            padding: 15px;
+        }
+
+        .listing-info h2 {
+            font-size: 18px;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .listing-info p {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .listing-info .price {
+            font-weight: bold;
+            color: #8e24aa;
+        }
+
+        .book-now-btn {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background-color: #8e24aa;
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 4px;
+            margin-top: 15px;
+        }
+
         .icon-menu {
             display: flex;
-            justify-content: center;
+            justify-content: space-around;
+            align-items: center;
             padding: 20px;
-            overflow-x: auto;
+            background-color: #ffffff;
             border-bottom: 1px solid #e0e0e0;
-            max-width: 1200px;
-            margin: 0 auto;
+            overflow-x: auto;
         }
 
         .icon-item {
             display: flex;
             flex-direction: column;
             align-items: center;
-            margin: 0 16px;
+            margin: 0 10px;
+            text-decoration: none;
+            color: #5f6368;
+            font-size: 12px;
         }
 
         .icon-item img {
-            width: 32px;
-            height: 32px;
-            margin-bottom: 8px;
-        }
-
-        .icon-item span {
-            font-size: 12px;
-            color: #5f6368;
-        }
-
-
-        .filters {
-            text-align: right;
-            padding: 10px 20px;
-            max-width: 1200px;
-            margin: 0 auto;
+            width: 40px;
+            height: 40px;
+            margin-bottom: 10px;
         }
 
         .price-toggle {
             display: flex;
-            justify-content: center;
+            justify-content: space-between;
             align-items: center;
-            margin: 20px 0;
-            padding: 10px;
-            border: 1px solid #e0e0e0;
-            border-radius: 100px;
-            width: fit-content;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .price-toggle span {
-            font-size: 14px;
-            margin-right: 10px;
+            padding: 10px 20px;
+            background-color: #ffffff;
+            border-bottom: 1px solid #e0e0e0;
         }
 
         .toggle-switch {
             position: relative;
             display: inline-block;
-            width: 40px;
-            height: 20px;
+            width: 60px;
+            height: 34px;
         }
 
         .toggle-switch input {
@@ -155,16 +215,16 @@
             bottom: 0;
             background-color: #ccc;
             transition: .4s;
-            border-radius: 20px;
+            border-radius: 34px;
         }
 
         .slider:before {
             position: absolute;
             content: "";
-            height: 16px;
-            width: 16px;
-            left: 2px;
-            bottom: 2px;
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
             background-color: white;
             transition: .4s;
             border-radius: 50%;
@@ -175,27 +235,7 @@
         }
 
         input:checked + .slider:before {
-            transform: translateX(20px);
-        }
-
-        .price-info {
-            font-size: 12px;
-            color: #5f6368;
-            margin-left: 10px;
-        }
-
-        .listing-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
-            padding: 20px;
-        }
-
-        .listing-item img {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-            border-radius: 8px;
+            transform: translateX(26px);
         }
     </style>
 </head>
@@ -214,52 +254,49 @@
             <span class="search-icon">🔍</span>
         </div>
         <div class="user-info">
-            <span>{{ request.user.username }}</span>
+            <span>Username</span>
             <span>🌐</span>
             <span>☰</span>
-            <img src="{% static 'user.png' %}" alt="User Profile" style="width: 32px; height: 32px; border-radius: 50%;">
+            <img src="{% static 'user.png' %}" alt="User Profile">
         </div>
     </header>
 
     <div class="icon-menu">
-        <div class="icon-item">
+        <a href="#" class="icon-item">
             <img src="{% static 'virtual-reality.png' %}" alt="Gaming Room">
             <span>Gaming Room</span>
-        </div>
-        <div class="icon-item">
+        </a>
+        <a href="#" class="icon-item">
             <img src="{% static 'swimming-pool (1).png' %}" alt="Pool Area">
             <span>Pool Area</span>
-        </div>
-        <div class="icon-item">
+        </a>
+        <a href="#" class="icon-item">
             <img src="{% static 'sunbed.png' %}" alt="Sunbed">
             <span>Sunbed</span>
-        </div>
-        <div class="icon-item">
+        </a>
+        <a href="#" class="icon-item">
             <img src="{% static 'cabin.png' %}" alt="Cabin">
             <span>Cabin</span>
-        </div>
-        <div class="icon-item">
+        </a>
+        <a href="#" class="icon-item">
             <img src="{% static 'canoeing.png' %}" alt="Canoe">
             <span>Canoe</span>
-        </div>
-        <div class="icon-item">
+        </a>
+        <a href="#" class="icon-item">
             <img src="{% static 'farmland.png' %}" alt="Countryside">
             <span>Countryside</span>
-        </div>
-        <div class="icon-item">
+        </a>
+        <a href="#" class="icon-item">
             <img src="{% static 'home.png' %}" alt="Home">
             <span>Home</span>
-        </div>
-        <div class="icon-item">
+        </a>
+        <a href="#" class="icon-item">
             <img src="{% static 'museum.png' %}" alt="Historic">
             <span>Historic</span>
-        </div>
-        <div class="icon-item">
+        </a>
+        <a href="#" class="icon-item">
             <span>➡️</span>
-        </div>
-    </div>
-
-    <div class="filters">
+        </a>
         <span>Filters</span>
     </div>
 
@@ -269,15 +306,48 @@
             <input type="checkbox">
             <span class="slider"></span>
         </label>
-        <span class="price-info">includes all fees, before taxes</span>
+        <span>includes all fees, before taxes</span>
     </div>
 
-    <div class="listing-grid">
-        <div class="listing-item">
-            <img src="{% static 'listing1.jpg' %}" alt="Listing 1">
-        </div>
-        <div class="listing-item">
-            <img src="{% static 'listing2.jpg' %}" alt="Listing 2">
+    <div class="main-container">
+        <h1>Welcome to Tanday Karon</h1>
+        <div class="featured-listings">
+            <div class="listing-card">
+                <img src="{% static 'listing1.jpg' %}" alt="Luxury Villa">
+                <div class="listing-info">
+                    <h2>Luxury Villa with Pool</h2>
+                    <p>4 guests · 2 bedrooms · 2 baths</p>
+                    <p class="price">$200 / night</p>
+                    <a href="{% url 'booking' %}" class="book-now-btn">Book Now</a>
+                </div>
+            </div>
+            <div class="listing-card">
+                <img src="{% static 'listing2.jpg' %}" alt="Beachfront Cottage">
+                <div class="listing-info">
+                    <h2>Cozy Beachfront Cottage</h2>
+                    <p>2 guests · 1 bedroom · 1 bath</p>
+                    <p class="price">$150 / night</p>
+                    <a href="{% url 'booking' %}" class="book-now-btn">Book Now</a>
+                </div>
+            </div>
+            <div class="listing-card">
+                <img src="{% static 'listing3.jpg' %}" alt="Mountain Retreat">
+                <div class="listing-info">
+                    <h2>Serene Mountain Retreat</h2>
+                    <p>6 guests · 3 bedrooms · 2 baths</p>
+                    <p class="price">$180 / night</p>
+                    <a href="{% url 'booking' %}" class="book-now-btn">Book Now</a>
+                </div>
+            </div>
+            <div class="listing-card">
+                <img src="{% static 'listing4.jpg' %}" alt="City Apartment">
+                <div class="listing-info">
+                    <h2>Modern City Apartment</h2>
+                    <p>3 guests · 1 bedroom · 1 bath</p>
+                    <p class="price">$120 / night</p>
+                    <a href="{% url 'booking' %}" class="book-now-btn">Book Now</a>
+                </div>
+            </div>
         </div>
     </div>
 </body>
