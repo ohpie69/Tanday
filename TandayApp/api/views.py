@@ -21,6 +21,8 @@ def login_view(request):
     return render(request, 'login.html')
 
 
+
+
 def hotel_login_view(request):
     if request.method == 'POST':
         username = request.POST['username']
@@ -133,3 +135,6 @@ def book_now(request):
     
 def success(request):
     return render(request, 'success.html')
+
+def landing_page_view(request):
+    return render(request, 'landingpage.html')
