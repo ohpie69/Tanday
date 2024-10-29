@@ -82,7 +82,7 @@
 
         .user-info span {
             margin-right: 16px;
-            font-size: 14px;
+            font-size: 20px;
         }
 
         .user-info img {
@@ -255,9 +255,10 @@
         </div>
         <div class="user-info">
             <span>{{ request.user.username }}</span>
-            <span>🌐</span>
-            <span>☰</span>
-            <img src="{% static 'user.png' %}" alt="User Profile">
+            <!-- <span>🌐</span> -->
+            <a href="{% url 'logout' %}"><span><img src="{% static 'sign-out.png' %}" alt="Sign Out"></span></a>
+            <a href="{% url 'my_bookings' %}"><img src="{% static 'user.png' %}" alt="User Profile"></a>
+            
         </div>
     </header>
 

@@ -8,7 +8,21 @@ class UserRegistrationForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ['first_name', 'last_name', 'username', 'password']  # Include first name, last name, and username
+        fields = ['first_name', 'last_name', 'username', 'email', 'password']  # Include email
+        widgets = {
+            'first_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'last_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'username': forms.TextInput(attrs={'class': 'form-control'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control'}),
+            'password': forms.PasswordInput(attrs={'class': 'form-control'}),
+        }
+        help_texts = {
+            'first_name': '',
+            'last_name': '',
+            'username': '',
+            'email': '',
+            'password': '',
+        }
 
     def clean(self):
         cleaned_data = super().clean()
@@ -18,7 +32,14 @@ class UserRegistrationForm(forms.ModelForm):
         if password and password_confirm and password != password_confirm:
             raise forms.ValidationError("Passwords do not match.")
 
-        return cleaned_data  # Return cleaned data for further processing
+        return cleaned_data
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.set_password(self.cleaned_data["password"])  # Hash the password
+        if commit:
+            user.save()
+        return user
 
 class UserUpdateForm(forms.ModelForm):
     class Meta:

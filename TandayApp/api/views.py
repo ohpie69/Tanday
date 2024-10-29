@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from .forms import UserRegistrationForm, UserUpdateForm, Booking
 from django.contrib import messages
+from .models import Booking
 
 # Create your views here.
 
@@ -44,11 +45,14 @@ def register_view(request):
     if request.method == 'POST':
         form = UserRegistrationForm(request.POST)
         if form.is_valid():
-            user = form.save(commit=False)
-            user.set_password(form.cleaned_data['password'])
-            user.save()
-            login(request, user) 
-            return redirect('home') 
+            try:
+                user = form.save()  # Save the user using the form's save method
+                login(request, user)  # Log the user in after registration
+                return redirect('home')  # Redirect to home after successful registration
+            except Exception as e:
+                print(f"Error saving user: {e}")  # Log the error
+        else:
+            print(form.errors)  # Log validation errors
     else:
         form = UserRegistrationForm()
     return render(request, 'register.html', {'form': form})
@@ -95,13 +99,17 @@ def update_profile_view(request):
 
 @login_required
 def booking_page(request):
-    return render(request, 'booking.html')
+    return render(request, 'booking.html', {
+        'username': request.user.username,
+        'email': request.user.email  # Pass the user's email to the template
+    })
 
 @login_required
 def logout_view(request):
     logout(request)
     return redirect('login')
 
+@login_required
 def book_now(request):
     if request.method == 'POST':
         name = request.POST.get('name')
@@ -117,9 +125,20 @@ def book_now(request):
             error_message = "Check-out date must be after check-in date."
 
         if error_message:
-            return render(request, 'booking.html', {'error': error_message})
+            return render(request, 'booking.html', {
+                'error': error_message,
+                'username': request.user.username,
+                'email': email,  # Retain the email input
+                'name': name,    # Retain the name input
+                'check_in': check_in,  # Retain the check-in date
+                'check_out': check_out,  # Retain the check-out date
+                'guests': guests,  # Retain the number of guests
+                'room_types': room_types  # Retain the selected room types
+            })
 
+        # Create a new booking instance
         booking = Booking(
+            user=request.user,  # Store the logged-in user
             name=name,
             email=email,
             check_in=check_in,
@@ -138,3 +157,9 @@ def success(request):
 
 def landing_page_view(request):
     return render(request, 'landingpage.html')
+
+@login_required
+def my_bookings(request):
+    # Get all bookings for the logged-in user
+    bookings = Booking.objects.filter(user=request.user)
+    return render(request, 'my_bookings.html', {'bookings': bookings})
