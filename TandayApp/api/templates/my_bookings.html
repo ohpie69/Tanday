@@ -46,7 +46,45 @@
             background-color: #ffda5c;
             color: black;
         }
+        .delete-button {
+            color: red;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+        .edit-link {
+            color: #2105db;
+        }
+        .edit-link:visited {
+            color: #2105db;
+        }
+        
+
     </style>
+    <script>
+        function confirmDelete(bookingId) {
+            if (confirm("Are you sure you want to delete this booking?")) {
+                // Send a POST request to delete the booking
+                fetch(`/delete_booking/${bookingId}/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}'  // Include CSRF token for security
+                    }
+                })
+                .then(response => {
+                    if (response.ok) {
+                        // If the response is OK, reload the page to see the updated bookings
+                        window.location.reload();
+                    } else {
+                        alert("Failed to delete the booking. Please try again.");
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert("An error occurred. Please try again.");
+                });
+            }
+        }
+    </script>
 </head>
 <body>
     <div class="container">
@@ -61,6 +99,7 @@
                         <th>Check-out</th>
                         <th>Guests</th>
                         <th>Room Types</th>
+                        <th>Edit / Delete</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -72,6 +111,10 @@
                             <td>{{ booking.check_out }}</td>
                             <td>{{ booking.guests }}</td>
                             <td>{{ booking.room_types }}</td>
+                            <td>
+                                <a href="{% url 'edit_booking' booking.id %}" class="edit-link">Edit</a> / 
+                                <span class="delete-button" onclick="confirmDelete({{ booking.id }})">Delete</span>
+                            </td>
                         </tr>
                     {% endfor %}
                 </tbody>
@@ -80,5 +123,6 @@
             <p>You have no bookings.</p>
         {% endif %}
         <a href="{% url 'home' %}" class="back-button">Back to Home</a>
+    </div>
 </body>
 </html>

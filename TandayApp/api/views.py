@@ -1,10 +1,11 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from .forms import UserRegistrationForm, UserUpdateForm, Booking
 from django.contrib import messages
 from .models import Booking
+from django.http import JsonResponse
 
 # Create your views here.
 
@@ -37,8 +38,9 @@ def hotel_login_view(request):
             return render(request, 'hotel_login.html', {'error': error_message})
     return render(request, 'hotel_login.html')
 
+@login_required
 def home_view(request):
-    username = request.session.get('username', 'Guest')  # Get username from session, default to 'Guest'
+    username = request.session.get('username', 'Guest')
     return render(request, 'home.html', {'username': username})
 
 def register_view(request):
@@ -46,13 +48,13 @@ def register_view(request):
         form = UserRegistrationForm(request.POST)
         if form.is_valid():
             try:
-                user = form.save()  # Save the user using the form's save method
-                login(request, user)  # Log the user in after registration
-                return redirect('home')  # Redirect to home after successful registration
+                user = form.save() 
+                login(request, user) 
+                return redirect('home') 
             except Exception as e:
-                print(f"Error saving user: {e}")  # Log the error
+                print(f"Error saving user: {e}")
         else:
-            print(form.errors)  # Log validation errors
+            print(form.errors)  
     else:
         form = UserRegistrationForm()
     return render(request, 'register.html', {'form': form})
@@ -80,10 +82,8 @@ def hotel_registration_view(request):
 
         messages.success(request, "Registration successful! You can now log in.")
 
-        # Redirect to the login page
         return redirect('hotel_login')
 
-    # If GET request, render the form
     return render(request, 'hotel_register.html')
 
 @login_required
@@ -101,7 +101,7 @@ def update_profile_view(request):
 def booking_page(request):
     return render(request, 'booking.html', {
         'username': request.user.username,
-        'email': request.user.email  # Pass the user's email to the template
+        'email': request.user.email  
     })
 
 @login_required
@@ -128,17 +128,16 @@ def book_now(request):
             return render(request, 'booking.html', {
                 'error': error_message,
                 'username': request.user.username,
-                'email': email,  # Retain the email input
-                'name': name,    # Retain the name input
-                'check_in': check_in,  # Retain the check-in date
-                'check_out': check_out,  # Retain the check-out date
-                'guests': guests,  # Retain the number of guests
-                'room_types': room_types  # Retain the selected room types
+                'email': email, 
+                'name': name,
+                'check_in': check_in, 
+                'check_out': check_out,
+                'guests': guests, 
+                'room_types': room_types 
             })
 
-        # Create a new booking instance
         booking = Booking(
-            user=request.user,  # Store the logged-in user
+            user=request.user,
             name=name,
             email=email,
             check_in=check_in,
@@ -151,7 +150,8 @@ def book_now(request):
         return redirect('success')
     else:
         return render(request, 'booking.html')
-    
+
+@login_required    
 def success(request):
     return render(request, 'success.html')
 
@@ -160,6 +160,39 @@ def landing_page_view(request):
 
 @login_required
 def my_bookings(request):
-    # Get all bookings for the logged-in user
     bookings = Booking.objects.filter(user=request.user)
     return render(request, 'my_bookings.html', {'bookings': bookings})
+
+@login_required
+def edit_booking(request, booking_id):
+    booking = get_object_or_404(Booking, id=booking_id, user=request.user)
+    
+    room_types = ['Gaming Room','Pool Area','Sunbed','Cabin','Canoe','Countryside','Home','Historic'] 
+    
+    if request.method == 'POST':
+        booking.name = request.POST.get('name')
+        booking.email = request.POST.get('email')
+        booking.check_in = request.POST.get('check-in')
+        booking.check_out = request.POST.get('check-out')
+        booking.guests = request.POST.get('guests')
+        
+        selected_room_types = request.POST.getlist('room_types')
+        booking.room_types = ', '.join(selected_room_types)
+
+        booking.save()
+        return redirect('my_bookings')
+    booking.room_types = booking.room_types.split(', ') if booking.room_types else []
+    
+    return render(request, 'edit_booking.html', {'booking': booking, 'room_types': room_types})
+
+@login_required
+def delete_booking(request, booking_id):
+    booking = get_object_or_404(Booking, id=booking_id, user=request.user)
+
+    if request.method == 'POST':
+        booking.delete()
+        return JsonResponse({'success': True}) 
+
+    return JsonResponse({'success': False}, status=400)
+
+

@@ -16,7 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from api.views import login_view, register_view, home_view, booking_page, logout_view,hotel_login_view, hotel_registration_view, success, book_now, landing_page_view, my_bookings
+from api.views import login_view, register_view, home_view, booking_page, logout_view,hotel_login_view, hotel_registration_view, success, book_now, landing_page_view, my_bookings, edit_booking, delete_booking
 
 urlpatterns = [
     path('', landing_page_view),
@@ -31,4 +31,6 @@ urlpatterns = [
     path('success/', success, name='success'),
     path('book_now', book_now, name= 'book_now'),
     path('my_bookings/', my_bookings, name='my_bookings'),
+    path('edit_booking/<int:booking_id>/', edit_booking, name='edit_booking'),
+    path('delete_booking/<int:booking_id>/', delete_booking, name='delete_booking'),
 ]

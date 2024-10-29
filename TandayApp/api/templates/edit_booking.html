@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Booking</title>
+</head>
+<body>
+    <h1>Edit Booking</h1>
+    <form method="POST" action="{% url 'edit_booking' booking.id %}">
+        {% csrf_token %}
+        <label for="name">Full Name:</label>
+        <input type="text" id="name" name="name" required value="{{ booking.name }}">
+        
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required value="{{ booking.email }}">
+        
+        <label for="check-in">Check-in:</label>
+        <input type="date" id="check-in" name="check-in" required value="{{ booking.check_in|date:'Y-m-d' }}">
+        
+        <label for="check-out">Check-out:</label>
+        <input type="date" id="check-out" name="check-out" required value="{{ booking.check_out|date:'Y-m-d' }}">
+        
+        <label for="guests">Guests:</label>
+        <input type="number" id="guests" name="guests" required value="{{ booking.guests }}">
+        
+        <label>Room Types:</label><br>
+        {% for room_type in room_types %}
+            <input type="checkbox" id="{{ room_type }}" name="room_types" value="{{ room_type }}" 
+            {% if room_type in booking.room_types %} checked {% endif %}>
+            <label for="{{ room_type }}">{{ room_type }}</label><br>
+        {% endfor %}
+        
+        <button type="submit">Update Booking</button>
+    </form>
+    <a href="{% url 'my_bookings' %}">Back to My Bookings</a>
+</body>
+</html>

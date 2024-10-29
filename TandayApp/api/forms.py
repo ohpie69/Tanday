@@ -8,7 +8,7 @@ class UserRegistrationForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ['first_name', 'last_name', 'username', 'email', 'password']  # Include email
+        fields = ['first_name', 'last_name', 'username', 'email', 'password']
         widgets = {
             'first_name': forms.TextInput(attrs={'class': 'form-control'}),
             'last_name': forms.TextInput(attrs={'class': 'form-control'}),
@@ -36,7 +36,7 @@ class UserRegistrationForm(forms.ModelForm):
 
     def save(self, commit=True):
         user = super().save(commit=False)
-        user.set_password(self.cleaned_data["password"])  # Hash the password
+        user.set_password(self.cleaned_data["password"])
         if commit:
             user.save()
         return user
@@ -66,5 +66,5 @@ class BookingForm(forms.ModelForm):
         label="Room Types"
     )
     class Meta:
-        model = Booking  # Assuming you have a Booking model
+        model = Booking 
         fields = ['name', 'email', 'check_in', 'check_out', 'guests', 'room_type']
