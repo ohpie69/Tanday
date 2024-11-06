@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-
+import uuid
 
 
 from django.db import models
@@ -13,8 +13,8 @@ class Booking(models.Model):
     check_out = models.DateField()
     guests = models.IntegerField()
     room_types = models.TextField(null=True)
-
+    booking_number = models.CharField(max_length=12, unique=True, editable=False, default=uuid.uuid4().hex[:12].upper())
 
     def __str__(self):
-        return f"{self.name} - {self.check_in} to {self.check_out}"
+        return f"{self.booking_number} - {self.name} ({self.check_in} to {self.check_out})"
 # Create your models here.
