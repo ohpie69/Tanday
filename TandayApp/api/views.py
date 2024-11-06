@@ -153,7 +153,11 @@ def book_now(request):
 
 @login_required    
 def success(request):
-    return render(request, 'success.html')
+    # Get the latest booking for the current user
+    booking = Booking.objects.filter(user=request.user).latest('id')
+    
+    # Pass the booking details to the template
+    return render(request, 'success.html', {'booking': booking})
 
 def landing_page_view(request):
     return render(request, 'landingpage.html')
