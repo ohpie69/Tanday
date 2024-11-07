@@ -35,7 +35,7 @@
         .logo {
             font-size: 1.5rem;
             font-weight: bold;
-            color: #FF385C;
+            color: #8e24aa;
             text-decoration: none;
             transition: transform 0.3s ease;
         }
@@ -54,7 +54,7 @@
             transition: background-color 0.3s ease, color 0.3s ease;
         }
         nav a:hover, nav a.active {
-            background-color: #FF385C;
+            background-color: #8e24aa;
             color: white;
         }
         .search-user {
@@ -84,7 +84,7 @@
             border: none;
             cursor: pointer;
             padding: 0.25rem;
-            color: #FF385C;
+            color: #8e24aa;
         }
         .user-actions {
             display: flex;
@@ -265,7 +265,7 @@
                         </button>
                         <div class="dashboard-menu">
                             <a href="/edit-account">Edit Account</a>
-                            <a href="/bookings">See Bookings</a>
+                            <a href="{% url 'my_bookings' %}">See Bookings</a>
                             <a href="/logout">Log Out</a>
                         </div>
                     </div>
