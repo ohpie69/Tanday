@@ -1,250 +1,247 @@
-{% load static %}
-{% if error %}
-    <script>
-        alert("{{ error }}");
-    </script>
-{% endif %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tanday Karon Booking</title>
+    <title>Tanday - Book Your Stay</title>
     <style>
+        /* Reset and base styles */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: Arial, sans-serif;
         }
 
         body {
-            background-color: #f0f0f0;
-            background-image: radial-gradient(circle at 10% 20%, rgba(216, 241, 230, 0.46) 0%, rgba(233, 226, 226, 0.28) 50.8%, rgba(57, 197, 187, 0.27) 100.2%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.5;
             color: #333;
+            background-color: #f7f7f7;
         }
 
+        /* Header styles */
         header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 20px;
-            background-color: rgba(255, 255, 255, 0.8);
-            border-bottom: 1px solid #e0e0e0;
+            background-color: #fff;
+            border-bottom: 1px solid #e5e5e5;
+            padding: 1rem 0;
         }
 
-        .logo img {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #FF385C;
+            text-decoration: none;
         }
 
         nav {
             display: flex;
-            align-items: center;
+            gap: 1rem;
         }
 
         nav a {
             text-decoration: none;
-            color: #5f6368;
-            margin: 0 15px;
-            font-size: 14px;
-            padding: 5px 10px;
-            border-radius: 20px;
-            transition: background-color 0.3s, color 0.3s;
+            color: #333;
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
 
         nav a:hover, nav a.active {
-            background-color: #8e24aa;
-            color: #ffffff;
-        }
-
-        .search-container {
-            display: flex;
-            align-items: center;
-            background-color: #f1f3f4;
-            border-radius: 24px;
-            padding: 6px 16px;
-            margin: 0 16px;
-        }
-
-        .search-container input {
-            border: none;
-            background-color: transparent;
-            margin-right: 8px;
-            font-size: 14px;
-            width: 200px;
-        }
-
-        .search-icon {
-            color: #8e24aa;
+            background-color: #FF385C;
+            color: white;
         }
 
         .user-info {
             display: flex;
             align-items: center;
-        }
-
-        .user-info span {
-            margin-right: 16px;
-            font-size: 20px;
+            gap: 1rem;
         }
 
         .user-info img {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            /* box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); */
+            width: 24px;
+            height: 24px;
         }
 
+        /* Booking container styles */
         .booking-container {
-            max-width: 700px;
-            margin: 40px auto;
-            background-color: rgba(255, 255, 255, 0.9);
-            border-radius: 20px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            padding: 30px;
-            backdrop-filter: blur(10px);
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background-color: #fff;
+            border-radius: 1rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
         }
 
-        h1 {
-            color: #8e24aa;
-            margin-bottom: 30px;
+        .booking-container h1 {
+            font-size: 2rem;
+            color: #FF385C;
+            margin-bottom: 1rem;
             text-align: center;
-            font-size: 28px;
         }
 
+        .booking-container h2 {
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            color: #666;
+        }
+
+        /* Form styles */
         .booking-form {
             display: grid;
-            gap: 25px;
+            gap: 1.5rem;
         }
 
         .form-group {
             display: flex;
             flex-direction: column;
+            gap: 0.5rem;
         }
 
-        label {
-            margin-bottom: 8px;
-            color: #5f6368;
-            font-weight: bold;
+        .form-group label {
+            font-weight: 500;
+            color: #666;
         }
 
-        input[type="text"],
-        input[type="date"],
-        input[type="number"] {
-            padding: 12px;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            font-size: 16px;
-            transition: border-color 0.3s;
-            background-color: rgba(255, 255, 255, 0.8);
+        .form-group input[type="text"],
+        .form-group input[type="email"],
+        .form-group input[type="number"],
+        .form-group input[type="date"] {
+            padding: 0.75rem;
+            border: 1px solid #e5e5e5;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
         }
 
-        input[type="text"]:focus,
-        input[type="date"]:focus,
-        input[type="number"]:focus {
-            border-color: #8e24aa;
+        .form-group input:focus {
             outline: none;
+            border-color: #FF385C;
         }
 
         .date-inputs {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 20px;
+            gap: 1rem;
         }
 
+        /* Room types grid */
         .room-types {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 15px;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 0.5rem;
         }
 
         .room-type-item {
             display: flex;
             align-items: center;
-            padding: 10px;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
+            gap: 0.5rem;
+            padding: 0.75rem;
+            border: 1px solid #e5e5e5;
+            border-radius: 0.5rem;
             cursor: pointer;
-            transition: background-color 0.3s, border-color 0.3s;
-            background-color: rgba(255, 255, 255, 0.8);
+            transition: all 0.3s ease;
         }
 
         .room-type-item:hover {
-            background-color: rgba(240, 240, 240, 0.8);
+            background-color: #f5f5f5;
+            border-color: #FF385C;
         }
 
         .room-type-item input[type="checkbox"] {
-            margin-right: 10px;
-        }
-
-        button {
-            background-color: #8e24aa;
-            color: white;
-            border: none;
-            padding: 15px;
-            border-radius: 10px;
+            width: 1.25rem;
+            height: 1.25rem;
+            border-radius: 0.25rem;
+            border: 2px solid #e5e5e5;
             cursor: pointer;
-            font-size: 18px;
-            transition: background-color 0.3s, transform 0.3s;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
         }
 
-        button:hover {
-            background-color: #6a1b9a;
-            transform: translateY(-2px);
+        /* Submit button */
+        button[type="submit"] {
+            background-color: #FF385C;
+            color: white;
+            padding: 1rem;
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            width: 100%;
+            margin-top: 1rem;
         }
 
-        .gif-container {
-            text-align: center;
-            margin-top: 30px;
+        button[type="submit"]:hover {
+            background-color: #e31c5f;
         }
 
-        .gif-container img {
-            max-width: 100%;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .date-inputs {
+                grid-template-columns: 1fr;
+            }
+
+            .room-types {
+                grid-template-columns: 1fr;
+            }
+
+            .booking-container {
+                margin: 1rem;
+                padding: 1rem;
+            }
         }
     </style>
 </head>
 <body>
+    {% load static %}
     <header>
-        <div class="logo">
-            <img src="{% static 'logo.png' %}" alt="Tanday Logo">
-        </div>
-        <nav>
-            <a href="{% url 'home' %}">Tanday</a>
-            <a href="#" class="active">Tanday karon</a>
-            <a href="#">Tanday unya</a>
-        </nav>
-        <div class="search-container">
-            <input type="text" placeholder="Search...">
-            <span class="search-icon">🔍</span>
-        </div>
-        <div class="user-info">
-            <span>{{ request.user.username }}</span>
-            <!-- <span>🌐</span> -->
-            <a href="{% url 'logout' %}"><span><img src="{% static 'sign-out.png' %}" alt="Sign Out"></span></a>
-            <a href="{% url 'my_bookings' %}"><img src="{% static 'user.png' %}" alt="User Profile"></a>
+        <div class="header-content">
+            <a href="/" class="logo">Tanday</a>
+            <nav>
+                <a href="{% url 'home' %}">Tanday</a>
+                <a href="#" class="active">Tanday Karon</a>
+                <a href="#">Tanday Unya</a>
+            </nav>
+            <div class="user-info">
+                <span>{{ request.user.username }}</span>
+                <a href="{% url 'home' %}">
+                    <img src="{% static 'sign-out.png' %}" alt="Sign Out">
+                </a>
+                <a href="{% url 'my_bookings' %}">
+                    <img src="{% static 'user.png' %}" alt="User Profile">
+                </a>
+            </div>
         </div>
     </header>
 
     <div class="booking-container">
         <h1>TANDAY NA!</h1>
-        <p>User is authenticated: {{ request.user.is_authenticated }}</p>
         <h2>Welcome, {{ username }}!</h2>
+        
         <form class="booking-form" method="post" action="{% url 'book_now' %}">
             {% csrf_token %}
             {{ form.as_p }}
+            
             <div class="form-group">
                 <label for="name">Full Name</label>
                 <input type="text" id="name" name="name" required value="{{ request.user.first_name }} {{ request.user.last_name }}">
             </div>
+
             <div class="form-group">
                 <label for="email">Email</label>
-                <input type="text" id="email" name="email" required value="{{ email }}">
+                <input type="email" id="email" name="email" required value="{{ email }}">
             </div>
+
             <div class="form-group date-inputs">
                 <div>
                     <label for="check-in">Check-in Date</label>
@@ -255,44 +252,52 @@
                     <input type="date" id="check-out" name="check-out" required>
                 </div>
             </div>
+
             <div class="form-group">
                 <label for="guests">Number of Guests</label>
                 <input type="number" id="guests" name="guests" min="1" required>
             </div>
+
             <div class="form-group">
                 <label>Room Types (Select all that apply)</label>
                 <div class="room-types">
                     <label class="room-type-item">
-                        <input type="checkbox" name="room_type" value="gaming-room"> Gaming Room
+                        <input type="checkbox" name="room_type" value="gaming-room">
+                        Gaming Room
                     </label>
                     <label class="room-type-item">
-                        <input type="checkbox" name="room_type" value="pool-area"> Pool Area
+                        <input type="checkbox" name="room_type" value="pool-area">
+                        Pool Area
                     </label>
                     <label class="room-type-item">
-                        <input type="checkbox" name="room_type" value="sunbed"> Sunbed
+                        <input type="checkbox" name="room_type" value="sunbed">
+                        Sunbed
                     </label>
                     <label class="room-type-item">
-                        <input type="checkbox" name="room_type" value="cabin"> Cabin
+                        <input type="checkbox" name="room_type" value="cabin">
+                        Cabin
                     </label>
                     <label class="room-type-item">
-                        <input type="checkbox" name="room_type" value="canoe"> Canoe
+                        <input type="checkbox" name="room_type" value="canoe">
+                        Canoe
                     </label>
                     <label class="room-type-item">
-                        <input type="checkbox" name="room_type" value="countryside"> Countryside
+                        <input type="checkbox" name="room_type" value="countryside">
+                        Countryside
                     </label>
                     <label class="room-type-item">
-                        <input type="checkbox" name="room_type" value="home"> Home
+                        <input type="checkbox" name="room_type" value="home">
+                        Home
                     </label>
                     <label class="room-type-item">
-                        <input type="checkbox" name="room_type" value="historic"> Historic
+                        <input type="checkbox" name="room_type" value="historic">
+                        Historic
                     </label>
                 </div>
             </div>
+
             <button type="submit">Book Now</button>
         </form>
-        <div class="gif-container">
-            <img src="{% static '15.gif' %}" alt="Tanday Karon GIF" style="width: 100px;">
-        </div>
     </div>
 </body>
 </html>
