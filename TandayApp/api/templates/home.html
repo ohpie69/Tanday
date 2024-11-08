@@ -230,7 +230,7 @@
             100% { transform: rotate(360deg); }
         }
         .filter-button.active {
-            background-color: #FF385C; /* Retain hover color */
+            background-color: #8e24aa; /* Retain hover color */
             color: white; /* Retain text color */
         }
     </style>
@@ -239,15 +239,9 @@
     {% load static %}
     <header>
         <div class="container header-content">
-<<<<<<< HEAD
-            <a href="{% url 'home' %}" class="logo">Tanday</a>
-=======
             <div class="balay">
-                <a href="/home" class="logo" ><img src="{% static 'logo.png' %}" alt="Tanday Logo" style="width: 40px; height: 40px; border-radius: 50%; margin-left: 20px;">Tanday</a>
-                
-            </div>
-            
->>>>>>> a02ec2499d2b69a9bd75a56029f9004b2428d992
+                <a href="/home" class="logo" ><img src="{% static 'logo.png' %}" alt="Tanday Logo" style="width: 40px; height: 40px; border-radius: 50%; margin-left: 20px;">Tanday</a>                
+          </div>        
             <nav>
                 <a class="active">Tanday</a>
                 <a href="{% url 'booking' %}" class="loading-link">Tanday Karon</a>
