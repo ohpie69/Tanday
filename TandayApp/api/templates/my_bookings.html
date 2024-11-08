@@ -3,76 +3,238 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Your Bookings</title>
+    <title>Hotel Booking Management</title>
     <style>
-        /* Add your CSS styles here */
         body {
             font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
+            margin: 0;
             padding: 20px;
+            box-sizing: border-box;
         }
         .container {
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            max-width: 1200px;
+            margin: 0 auto;
         }
         h1 {
-            margin-bottom: 20px;
+            color: #333;
+            text-align: center;
         }
         table {
             width: 100%;
             border-collapse: collapse;
+            margin-bottom: 20px;
         }
         th, td {
-            padding: 10px;
             border: 1px solid #ddd;
+            padding: 12px;
             text-align: left;
         }
         th {
             background-color: #f2f2f2;
+            font-weight: bold;
+            color: #333;
         }
-        .back-button {
-            display: inline-block;
-            margin-top: 20px;
-            padding: 10px 15px;
-            background-color: #8e24aa; /* Bootstrap primary color */
-            color: white;
+        .action-link {
+            color: #0066cc;
             text-decoration: none;
-            border-radius: 5px;
-            transition: background-color 0.3s;
+            margin-right: 10px;
         }
-        .back-button:hover {
-            background-color: #ffda5c;
-            color: black;
-        }
-        .delete-button {
-            color: red;
-            cursor: pointer;
+        .action-link:hover {
             text-decoration: underline;
         }
-        .edit-link {
-            color: #2105db;
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+            padding: 0 20%;
         }
-        .edit-link:visited {
-            color: #2105db;
+        .button {
+            background-color: #c4b5fd;
+            border: none;
+            color: black;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 4px;
+            width: 200px;
         }
-        
-
+        .button:hover {
+            background-color: #b39ddb;
+        }
+        .edit-booking-form {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+            display: none;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .form-group input[type="text"],
+        .form-group input[type="email"],
+        .form-group input[type="date"],
+        .form-group input[type="number"] {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .room-types {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .room-type-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: #0066cc;
+            text-decoration: none;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
     </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Your Bookings</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>Booking ID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Check-in</th>
+                    <th>Check-out</th>
+                    <th>Guests</th>
+                    <th>Room Types</th>
+                    <th>Edit / Delete</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for booking in bookings %}
+                    <tr>
+                        <td>{{ booking.booking_number }}</td>
+                        <td>{{ booking.name }}</td>
+                        <td>{{ booking.email }}</td>
+                        <td>{{ booking.check_in }}</td>
+                        <td>{{ booking.check_out }}</td>
+                        <td>{{ booking.guests }}</td>
+                        <td>{{ booking.room_types }}</td>
+                        <td>
+                            <a href="#" class="action-link edit-link" data-booking-id="{{ booking.id }}">Edit</a>
+                            <a href="#" class="action-link" onclick="confirmDelete({{ booking.id }})">Delete</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="button-container">
+        <a href="{% url 'booking' %}" class="button">Add Booking</a>
+        <button class="button" id="editBookingsButton">Edit Bookings</button>
+    </div>
+
+    <div class="edit-booking-form" id="editBookingForm">
+        <h2>Edit Booking</h2>
+        <form id="bookingForm" method="POST">
+            {% csrf_token %}
+            <input type="hidden" id="booking_id" name="booking_id">
+            <div class="form-group">
+                <label for="booking_number">Booking ID:</label>
+                <input type="text" id="booking_number" name="booking_number" readonly>
+            </div>
+            <div class="form-group">
+                <label for="full_name">Full Name:</label>
+                <input type="text" id="full_name" name="full_name" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="check_in">Check-in:</label>
+                <input type="date" id="check_in" name="check_in" required>
+            </div>
+            <div class="form-group">
+                <label for="check_out">Check-out:</label>
+                <input type="date" id="check_out" name="check_out" required>
+            </div>
+            <div class="form-group">
+                <label for="guests">Guests:</label>
+                <input type="number" id="guests" name="guests" min="1" required>
+            </div>
+            <div class="form-group">
+                <label>Room Types:</label>
+                <div class="room-types">
+                    <div class="room-type-option">
+                        <input type="checkbox" id="gaming-room" name="room_types" value="gaming-room">
+                        <label for="gaming-room">Gaming Room</label>
+                    </div>
+                    <div class="room-type-option">
+                        <input type="checkbox" id="pool-area" name="room_types" value="pool-area">
+                        <label for="pool-area">Pool Area</label>
+                    </div>
+                    <div class="room-type-option">
+                        <input type="checkbox" id="sunbed" name="room_types" value="sunbed">
+                        <label for="sunbed">Sunbed</label>
+                    </div>
+                    <div class="room-type-option">
+                        <input type="checkbox" id="cabin" name="room_types" value="cabin">
+                        <label for="cabin">Cabin</label>
+                    </div>
+                    <div class="room-type-option">
+                        <input type="checkbox" id="canoe" name="room_types" value="canoe">
+                        <label for="canoe">Canoe</label>
+                    </div>
+                    <div class="room-type-option">
+                        <input type="checkbox" id="countryside" name="room_types" value="countryside">
+                        <label for="countryside">Countryside</label>
+                    </div>
+                    <div class="room-type-option">
+                        <input type="checkbox" id="home" name="room_types" value="home">
+                        <label for="home">Home</label>
+                    </div>
+                    <div class="room-type-option">
+                        <input type="checkbox" id="historic" name="room_types" value="historic">
+                        <label for="historic">Historic</label>
+                    </div>
+                </div>
+            </div>
+            <button type="submit" class="button">Update Booking</button>
+        </form>
+        <button class="button" id="cancelEditButton">Cancel</button>
+    </div>
+
     <script>
         function confirmDelete(bookingId) {
             if (confirm("Are you sure you want to delete this booking?")) {
-                // Send a POST request to delete the booking
                 fetch(`/delete_booking/${bookingId}/`, {
                     method: 'POST',
                     headers: {
-                        'X-CSRFToken': '{{ csrf_token }}'  // Include CSRF token for security
+                        'X-CSRFToken': '{{ csrf_token }}'
                     }
                 })
                 .then(response => {
                     if (response.ok) {
-                        // If the response is OK, reload the page to see the updated bookings
                         window.location.reload();
                     } else {
                         alert("Failed to delete the booking. Please try again.");
@@ -84,45 +246,101 @@
                 });
             }
         }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const editForm = document.getElementById('editBookingForm');
+            const editLinks = document.querySelectorAll('.edit-link');
+            const editBookingsButton = document.getElementById('editBookingsButton');
+            const cancelEditButton = document.getElementById('cancelEditButton');
+            const bookingForm = document.getElementById('bookingForm');
+
+            function showEditForm() {
+                editForm.style.display = 'block';
+                window.scrollTo({top: editForm.offsetTop, behavior: 'smooth'});
+            }
+
+            function hideEditForm() {
+                editForm.style.display = 'none';
+            }
+
+            function populateForm(booking) {
+                document.getElementById('booking_id').value = booking.id;
+                document.getElementById('booking_number').value = booking.booking_number;
+                document.getElementById('full_name').value = booking.name;
+                document.getElementById('email').value = booking.email;
+                document.getElementById('check_in').value = booking.check_in;
+                document.getElementById('check_out').value = booking.check_out;
+                document.getElementById('guests').value = booking.guests;
+
+                // Clear all checkboxes
+                document.querySelectorAll('input[name="room_types"]').forEach(checkbox => {
+                    checkbox.checked = false;
+                });
+
+                // Check the appropriate room types
+                const roomTypes = booking.room_types.split(',');
+                roomTypes.forEach(roomType => {
+                    const checkbox = document.querySelector(`input[name="room_types"][value="${roomType.trim()}"]`);
+                    if (checkbox) {
+                        checkbox.checked = true;
+                    }
+                });
+            }
+
+            editLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const bookingId = this.getAttribute('data-booking-id');
+                    fetch(`/get_booking/${bookingId}/`)
+                        .then(response => response.json())
+                        .then(booking => {
+                            populateForm(booking);
+                            showEditForm();
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            alert("Failed to load booking data. Please try again.");
+                        });
+                });
+            });
+
+            editBookingsButton.addEventListener('click', function() {
+                // This button now just shows an empty form for adding a new booking
+                document.getElementById('bookingForm').reset();
+                document.getElementById('booking_id').value = '';
+                document.getElementById('booking_number').value = '';
+                showEditForm();
+            });
+
+            cancelEditButton.addEventListener('click', hideEditForm);
+
+            bookingForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const formData = new FormData(this);
+                const bookingId = formData.get('booking_id');
+                const url = bookingId ? `/update_booking/${bookingId}/` : '/add_booking/';
+
+                fetch(url, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    }
+                })
+                .then(response => {
+                    if (response.ok) {
+                        alert(bookingId ? 'Booking updated successfully!' : 'Booking added successfully!');
+                        window.location.reload();
+                    } else {
+                        alert(bookingId ? "Failed to update the booking. Please try again." : "Failed to add the booking. Please try again.");
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert("An error occurred. Please try again.");
+                });
+            });
+        });
     </script>
-</head>
-<body>
-    <div class="container">
-        <h1>Your Bookings</h1>
-        {% if bookings %}
-            <table>
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Check-in</th>
-                        <th>Check-out</th>
-                        <th>Guests</th>
-                        <th>Room Types</th>
-                        <th>Edit / Delete</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for booking in bookings %}
-                        <tr>
-                            <td>{{ booking.name }}</td>
-                            <td>{{ booking.email }}</td>
-                            <td>{{ booking.check_in }}</td>
-                            <td>{{ booking.check_out }}</td>
-                            <td>{{ booking.guests }}</td>
-                            <td>{{ booking.room_types }}</td>
-                            <td>
-                                <a href="{% url 'edit_booking' booking.id %}" class="edit-link">Edit</a> / 
-                                <span class="delete-button" onclick="confirmDelete({{ booking.id }})">Delete</span>
-                            </td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        {% else %}
-            <p>You have no bookings.</p>
-        {% endif %}
-        <a href="{% url 'home' %}" class="back-button">Back to Home</a>
-    </div>
 </body>
 </html>

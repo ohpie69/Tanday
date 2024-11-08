@@ -206,7 +206,7 @@
     {% load static %}
     <header>
         <div class="header-content">
-            <a href="/" class="logo">Tanday</a>
+            <a href="{% url 'home' %}" class="logo">Tanday</a>
             <nav>
                 <a href="{% url 'home' %}">Tanday</a>
                 <a href="#" class="active">Tanday Karon</a>
@@ -228,7 +228,7 @@
         <h1>TANDAY NA!</h1>
         <h2>Welcome, {{ username }}!</h2>
         
-        <form class="booking-form" method="post" action="{% url 'book_now' %}">
+        <form class="booking-form" method="post" action="{% url 'success' %}">
             {% csrf_token %}
             {{ form.as_p }}
             
