@@ -56,6 +56,7 @@
         nav a:hover, nav a.active {
             background-color: #8e24aa;
             color: white;
+            
         }
         .search-user {
             display: flex;
@@ -155,6 +156,9 @@
             background-color: #8e24aa;
             color: white;
         }
+        .filter-button.active{
+            transform: scale(1.1);
+        }
         .listings {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
@@ -225,15 +229,27 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+        .filter-button.active {
+            background-color: #FF385C; /* Retain hover color */
+            color: white; /* Retain text color */
+        }
     </style>
 </head>
 <body>
     {% load static %}
     <header>
         <div class="container header-content">
+<<<<<<< HEAD
             <a href="{% url 'home' %}" class="logo">Tanday</a>
+=======
+            <div class="balay">
+                <a href="/home" class="logo" ><img src="{% static 'logo.png' %}" alt="Tanday Logo" style="width: 40px; height: 40px; border-radius: 50%; margin-left: 20px;">Tanday</a>
+                
+            </div>
+            
+>>>>>>> a02ec2499d2b69a9bd75a56029f9004b2428d992
             <nav>
-                <a href="{% url 'home' %}" class="loading-link">Tanday</a>
+                <a class="active">Tanday</a>
                 <a href="{% url 'booking' %}" class="loading-link">Tanday Karon</a>
                 <a href="{% url 'home' %}" class="loading-link">Tanday Unya</a>
             </nav>
@@ -276,8 +292,8 @@
     </header>
 
     <main class="container">
-        <div class="filters">
-            <button class="filter-button">Rooms</button>
+        <div class="filters" style="margin-top: 20px;">
+            <button class="filter-button active">Rooms</button>
             <button class="filter-button">Amazing views</button>
             <button class="filter-button">Tiny homes</button>
             <button class="filter-button">Cabins</button>
@@ -373,7 +389,16 @@
 
                     setTimeout(() => {
                         window.location.href = this.getAttribute('href');
-                    }, 2000); // 2 second delay
+                    }, 1000);
+                });
+            });
+
+            const filterButtons = document.querySelectorAll('.filter-button');
+
+            filterButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    filterButtons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
                 });
             });
         });
