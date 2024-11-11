@@ -230,8 +230,8 @@
             100% { transform: rotate(360deg); }
         }
         .filter-button.active {
-            background-color: #8e24aa; /* Retain hover color */
-            color: white; /* Retain text color */
+            background-color: #8e24aa;
+            color: white;
         }
     </style>
 </head>
@@ -245,7 +245,7 @@
             <nav>
                 <a class="active">Tanday</a>
                 <a href="{% url 'booking' %}" class="loading-link">Tanday Karon</a>
-                <a href="{% url 'home' %}" class="loading-link">Tanday Unya</a>
+                <a href="#" class="loading-link">Tanday Unya</a>
             </nav>
             <div class="search-user">
                 <div class="search-bar">
@@ -299,73 +299,8 @@
             <button class="filter-button">Bed & breakfasts</button>
         </div>
 
-        <div class="listings">
-            <div class="listing-card">
-                <div class="listing-image">
-                    <img src="{% static 'serene.avif' %}" alt="Tanday Karon, Phuket" loading="lazy">
-                </div>
-                <div class="listing-content">
-                    <h3 class="listing-title">Tanday Karon, Phuket</h3>
-                    <p class="listing-details">Stay with Sarah</p>
-                    <p class="listing-details">Nov 30 - Dec 5</p>
-                    <p class="listing-price">₱7,541 night</p>
-                </div>
-            </div>
-            <div class="listing-card">
-                <div class="listing-image">
-                    <img src="{% static 'serene.avif' %}" alt="Tanday Unya, Bangkok">
-                </div>
-                <div class="listing-content">
-                    <h3 class="listing-title">Tanday Unya, Bangkok</h3>
-                    <p class="listing-details">Stay with John</p>
-                    <p class="listing-details">Dec 1 - 6</p>
-                    <p class="listing-price">₱9,270 night</p>
-                </div>
-            </div>
-            <div class="listing-card">
-                <div class="listing-image">
-                    <img src="{% static 'serene.avif' %}" alt="Tanday, Manila">
-                </div>
-                <div class="listing-content">
-                    <h3 class="listing-title">Tanday, Manila</h3>
-                    <p class="listing-details">Stay with Maria</p>
-                    <p class="listing-details">Nov 23 - 28</p>
-                    <p class="listing-price">₱2,211 night</p>
-                </div>
-            </div>
-            <div class="listing-card">
-                <div class="listing-image">
-                    <img src="{% static 'serene.avif' %}" alt="Tanday Karon, Baguio">
-                </div>
-                <div class="listing-content">
-                    <h3 class="listing-title">Tanday Karon, Baguio</h3>
-                    <p class="listing-details">Stay with Monica</p>
-                    <p class="listing-details">Nov 11 - 16</p>
-                    <p class="listing-price">₱1,614 night</p>
-                </div>
-            </div>
-            <div class="listing-card">
-                <div class="listing-image">
-                    <img src="{% static 'serene.avif' %}" alt="Tanday Unya, Cebu">
-                </div>
-                <div class="listing-content">
-                    <h3 class="listing-title">Tanday Unya, Cebu</h3>
-                    <p class="listing-details">Stay with David</p>
-                    <p class="listing-details">Jan 15 - 20</p>
-                    <p class="listing-price">₱3,065 night</p>
-                </div>
-            </div>
-            <div class="listing-card">
-                <div class="listing-image">
-                    <img src="{% static 'serene.avif' %}" alt="Tanday, Boracay">
-                </div>
-                <div class="listing-content">
-                    <h3 class="listing-title">Tanday, Boracay</h3>
-                    <p class="listing-details">Stay with Agnes</p>
-                    <p class="listing-details">Dec 1 - 6</p>
-                    <p class="listing-price">₱2,812 night</p>
-                </div>
-            </div>
+        <div class="listings" id="listings-container">
+            <!-- Listing cards will be dynamically inserted here -->
         </div>
     </main>
 
@@ -388,13 +323,58 @@
             });
 
             const filterButtons = document.querySelectorAll('.filter-button');
+            const listingsContainer = document.getElementById('listings-container');
+
+            const listings = [
+                { title: "Tanday Karon, Phuket", details: "Stay with Sarah", price: "₱7,541 night", img: "{% static 'serene.avif' %}", filters: ["Amazing views", "Tiny homes"] },
+                { title: "Tanday Unya, Bangkok", details: "Stay with John", price: "₱9,270 night", img: "{% static 'modern.jpg' %}", filters: ["Tropical", "Beachfront", "Countryside"] },
+                { title: "Tanday, Manila", details: "Stay with Maria", price: "₱2,211 night", img: "{% static 'luxury.jpg' %}", filters: ["Rooms"] },
+                { title: "Tanday Karon, Baguio", details: "Stay with Monica", price: "₱1,614 night", img: "{% static 'kanipaan.jpg' %}", filters: ["Rooms"] },
+                { title: "Tanday Unya, Cebu", details: "Stay with David", price: "₱3,065 night", img: "{% static 'cozy.jpg' %}", filters: ["Rooms"] },
+                { title: "Tanday, Boracay", details: "Stay with Agnes", price: "₱2,812 night", img: "{% static 'blue.jpg' %}", filters: ["Rooms"] }
+            ];
+
+            function displayFilteredListings() {
+                const activeFilter = document.querySelector('.filter-button.active').innerText;
+                listingsContainer.innerHTML = ''; // Clear previous listings
+
+                const filteredListings = listings.filter(listing => listing.filters.includes(activeFilter));
+
+                if (filteredListings.length > 0) {
+                    filteredListings.forEach(listing => {
+                        listingsContainer.innerHTML += `
+                            <div class="listing-card">
+                                <div class="listing-image">
+                                    <img src="${listing.img}" alt="${listing.title}" loading="lazy">
+                                </div>
+                                <div class="listing-content">
+                                    <h3 class="listing-title">${listing.title}</h3>
+                                    <p class="listing-details">${listing.details}</p>
+                                    <p class="listing-price">${listing.price}</p>
+                                </div>
+                            </div>
+                        `;
+                    });
+                } else {
+                    listingsContainer.innerHTML = '<p>No listings available for this filter.</p>';
+                }
+            }
 
             filterButtons.forEach(button => {
                 button.addEventListener('click', function() {
                     filterButtons.forEach(btn => btn.classList.remove('active'));
                     this.classList.add('active');
+                    displayFilteredListings(); // Display listings based on the active filter
                 });
             });
+
+            // Back button functionality
+            document.getElementById('back-button').addEventListener('click', function() {
+                window.location.href = '{% url "home" %}'; // Adjust the URL to your home page
+            });
+
+            // Initial display
+            displayFilteredListings();
         });
 
         // Your existing load event listener
@@ -408,4 +388,5 @@
         });
     </script>
 </body>
+</html>
 </html>
