@@ -2,6 +2,7 @@ from django import forms
 from django.contrib.auth.models import User
 from .models import Booking
 
+# User Registration Form
 class UserRegistrationForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput, label="Password")
     password_confirm = forms.CharField(widget=forms.PasswordInput, label="Confirm Password")
@@ -41,13 +42,13 @@ class UserRegistrationForm(forms.ModelForm):
             user.save()
         return user
 
+# User Update Form
 class UserUpdateForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ['username', 'email']
 
-
-
+# Booking Form
 ROOM_TYPE_CHOICES = [
     ('gaming-room', 'Gaming Room'),
     ('pool-area', 'Pool Area'),
@@ -60,11 +61,27 @@ ROOM_TYPE_CHOICES = [
 ]
 
 class BookingForm(forms.ModelForm):
-    room_type = forms.MultipleChoiceField(
+    room_types = forms.MultipleChoiceField(
         choices=ROOM_TYPE_CHOICES,
         widget=forms.CheckboxSelectMultiple,
         label="Room Types"
     )
+
     class Meta:
-        model = Booking 
-        fields = ['name', 'email', 'check_in', 'check_out', 'guests', 'room_type']
+        model = Booking
+        fields = ['name', 'email', 'check_in', 'check_out', 'guests', 'room_types']
+        widgets = {
+            'check_in': forms.DateInput(attrs={'type': 'date'}),
+            'check_out': forms.DateInput(attrs={'type': 'date'}),
+        }
+
+    def clean(self):
+        cleaned_data = super().clean()
+        check_in = cleaned_data.get('check_in')
+        check_out = cleaned_data.get('check_out')
+
+        # Check that check_out is after check_in
+        if check_in and check_out and check_out <= check_in:
+            raise forms.ValidationError("Check-out date must be after the check-in date.")
+
+        return cleaned_data

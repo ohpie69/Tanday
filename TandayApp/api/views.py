@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
-from .forms import UserRegistrationForm, UserUpdateForm, Booking
+from .forms import UserRegistrationForm, UserUpdateForm, BookingForm
 from django.contrib import messages
 from .models import Booking
 from django.http import JsonResponse
@@ -169,25 +169,30 @@ def my_bookings(request):
 
 @login_required
 def edit_booking(request, booking_id):
-    booking = get_object_or_404(Booking, id=booking_id, user=request.user)
-    
-    room_types = ['Gaming Room','Pool Area','Sunbed','Cabin','Canoe','Countryside','Home','Historic'] 
+    # Retrieve the booking based on the ID
+    booking = get_object_or_404(Booking, id=booking_id)
     
     if request.method == 'POST':
-        booking.name = request.POST.get('name')
-        booking.email = request.POST.get('email')
-        booking.check_in = request.POST.get('check-in')
-        booking.check_out = request.POST.get('check-out')
-        booking.guests = request.POST.get('guests')
+        form = BookingForm(request.POST, instance=booking)
         
-        selected_room_types = request.POST.getlist('room_types')
-        booking.room_types = ', '.join(selected_room_types)
+        if form.is_valid():
+            # Save the form data back to the booking
+            booking = form.save(commit=False)
+            # Join room types to store as a comma-separated string
+            booking.room_types = ','.join(form.cleaned_data['room_types'])
+            booking.save()
+            messages.success(request, 'Your booking has been updated successfully!')
+            return redirect('my_bookings')  # Redirect to the bookings list page
+    else:
+        # Pre-fill room_types as a list for the form
+        initial_data = booking.room_types.split(',') if booking.room_types else []
+        form = BookingForm(instance=booking, initial={'room_types': initial_data})
 
-        booking.save()
-        return redirect('my_bookings')
-    booking.room_types = booking.room_types.split(', ') if booking.room_types else []
-    
-    return render(request, 'edit_booking.html', {'booking': booking, 'room_types': room_types})
+    return render(request, 'edit_booking.html', {
+        'form': form,
+        'booking': booking,
+        'room_types': form.fields['room_types'].choices
+    })
 
 @login_required
 def delete_booking(request, booking_id):

@@ -114,6 +114,7 @@
     </style>
 </head>
 <body>
+    {% load static %}
     <div class="container">
         <h1>Your Bookings</h1>
         <table>
@@ -140,7 +141,7 @@
                         <td>{{ booking.guests }}</td>
                         <td>{{ booking.room_types }}</td>
                         <td>
-                            <a href="#" class="action-link edit-link" data-booking-id="{{ booking.id }}">Edit</a>
+                            <a href="{% url 'edit_booking' booking.id %}" class="action-link">Edit</a>
                             <a href="#" class="action-link" onclick="confirmDelete({{ booking.id }})">Delete</a>
                         </td>
                     </tr>

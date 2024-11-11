@@ -3,36 +3,195 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Booking</title>
+    <title>Edit Your Booking</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+        :root {
+            --purple-50: #faf5ff;
+            --purple-100: #f3e8ff;
+            --purple-200: #e9d5ff;
+            --purple-300: #d8b4fe;
+            --purple-400: #c084fc;
+            --purple-500: #a855f7;
+            --purple-600: #9333ea;
+            --purple-700: #7e22ce;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(to bottom, var(--purple-50), white);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            max-width: 800px;
+            width: 100%;
+        }
+
+        .card-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .card-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(to right, var(--purple-600), var(--purple-400));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        .card-subtitle {
+            font-size: 1.25rem;
+            color: #4b5563;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="date"],
+        input[type="number"] {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.375rem;
+            font-size: 1rem;
+            transition: border-color 0.15s ease-in-out;
+        }
+
+        input[type="text"]:hover,
+        input[type="email"]:hover,
+        input[type="date"]:hover,
+        input[type="number"]:hover {
+            border-color: var(--purple-400);
+        }
+
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        input[type="date"]:focus,
+        input[type="number"]:focus {
+            outline: none;
+            border-color: var(--purple-500);
+            box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.45);
+        }
+
+        .date-inputs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .room-types {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .room-type {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.375rem;
+            transition: all 0.15s ease-in-out;
+        }
+
+        .room-type:hover {
+            border-color: var(--purple-400);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .room-type input[type="checkbox"] {
+            margin-right: 0.5rem;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .button {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            border: none;
+            border-radius: 0.375rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s ease-in-out;
+        }
+
+        .button-primary {
+            background-color: var(--purple-600);
+            color: white;
+        }
+
+        .button-primary:hover {
+            background-color: var(--purple-700);
+        }
+
+        .button-secondary {
+            background-color: white;
+            color: var(--purple-600);
+            border: 1px solid var(--purple-600);
+        }
+
+        .button-secondary:hover {
+            background-color: var(--purple-50);
+        }
+
+        @media (max-width: 640px) {
+            .date-inputs {
+                grid-template-columns: 1fr;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+        }
+    </style>
 </head>
 <body>
-    <h1>Edit Booking</h1>
-    <form method="POST" action="{% url 'edit_booking' booking.id %}">
-        {% csrf_token %}
-        <label for="name">Full Name:</label>
-        <input type="text" id="name" name="name" required value="{{ booking.name }}">
-        
-        <label for="email">Email:</label>
-        <input type="email" id="email" name="email" required value="{{ booking.email }}">
-        
-        <label for="check-in">Check-in:</label>
-        <input type="date" id="check-in" name="check-in" required value="{{ booking.check_in|date:'Y-m-d' }}">
-        
-        <label for="check-out">Check-out:</label>
-        <input type="date" id="check-out" name="check-out" required value="{{ booking.check_out|date:'Y-m-d' }}">
-        
-        <label for="guests">Guests:</label>
-        <input type="number" id="guests" name="guests" required value="{{ booking.guests }}">
-        
-        <label>Room Types:</label><br>
-        {% for room_type in room_types %}
-            <input type="checkbox" id="{{ room_type }}" name="room_types" value="{{ room_type }}" 
-            {% if room_type in booking.room_types %} checked {% endif %}>
-            <label for="{{ room_type }}">{{ room_type }}</label><br>
-        {% endfor %}
-        
-        <button type="submit">Update Booking</button>
-    </form>
-    <a href="{% url 'my_bookings' %}">Back to My Bookings</a>
+    <div class="card">
+        <div class="card-header">
+            <h1 class="card-title">TANDAY NA!</h1>
+            <p class="card-subtitle">Edit Your Perfect Stay ✨</p>
+        </div>
+        <form method="POST" action="{% url 'edit_booking' booking.id %}">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <div class="button-group">
+                <button type="submit" class="button button-primary">Update Booking</button>
+                <a href="{% url 'my_bookings' %}" class="button button-secondary">Back to My Bookings</a>
+            </div>
+        </form>
+    </div>
 </body>
 </html>
