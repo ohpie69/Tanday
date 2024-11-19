@@ -2,10 +2,11 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
-from .forms import UserRegistrationForm, UserUpdateForm, BookingForm
+from .forms import UserRegistrationForm, UserUpdateForm, BookingForm, HotelRegistrationForm, HotelLoginForm
 from django.contrib import messages
-from .models import Booking
-from django.http import JsonResponse
+from .models import Booking, Hotel
+from django.http import HttpResponse, JsonResponse
+from django.contrib.auth.hashers import check_password
 
 # Create your views here.
 
@@ -22,21 +23,30 @@ def login_view(request):
             return render(request, 'login.html', {'error': error_message})
     return render(request, 'login.html')
 
-
-
-
 def hotel_login_view(request):
     if request.method == 'POST':
-        username = request.POST['username']
-        password = request.POST['password']
-        user = authenticate(request, username=username, password=password)
-        if user is not None and user.is_hotel:  
-            login(request, user)
-            return redirect('hotel_home')  
-        else:
-            error_message = "Incorrect username or password. Please try again."
-            return render(request, 'hotel_login.html', {'error': error_message})
-    return render(request, 'hotel_login.html')
+        form = HotelLoginForm(request.POST)
+        if form.is_valid():
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password']
+            
+            # Authenticate the hotel using the custom Hotel model
+            try:
+                hotel = Hotel.objects.get(email=username)  # or use phone number, depending on your model
+            except Hotel.DoesNotExist:
+                hotel = None
+
+            # Verify the password for the hotel
+            if hotel and check_password(password, hotel.password):  # Assuming password is hashed
+                login(request, hotel)  # Log the hotel in
+                return redirect('hotel_dashboard')  # Adjust to your dashboard URL name
+            else:
+                messages.error(request, "Invalid username or password")
+
+    else:
+        form = HotelLoginForm()
+
+    return render(request, 'hotel_login.html', {'form': form})
 
 @login_required
 def home_view(request):
@@ -60,31 +70,35 @@ def register_view(request):
     return render(request, 'register.html', {'form': form})
 
 def hotel_registration_view(request):
-    if request.method == "POST":
-        # Get the form data from POST request
-        hotel_name = request.POST.get("hotelName")
-        location = request.POST.get("location")
-        phone = request.POST.get("phone")
-        description = request.POST.get("hotelDescription")
-        owner_name = request.POST.get("ownerName")
-        owner_email = request.POST.get("ownerEmail")
-        owner_phone = request.POST.get("ownerPhone")
-        manager_name = request.POST.get("managerName", "")
-        manager_email = request.POST.get("managerEmail", "")
-        manager_phone = request.POST.get("managerPhone", "")
-        username = request.POST.get("username")
-        password = request.POST.get("password")
-        security_question = request.POST.get("securityQuestion")
+    if request.method == 'POST':
+        form = HotelRegistrationForm(request.POST)
+        
+        if form.is_valid():
+            hotel_name = form.cleaned_data['hotel_name']
+            location = form.cleaned_data['location']
+            phone = form.cleaned_data['phone']
+            hotel_description = form.cleaned_data['hotel_description']
+            username = form.cleaned_data['username']
+            email = form.cleaned_data['email']
+            password = form.cleaned_data['password']
 
-        # Process the data (e.g., save it to the database)
-        # Example: You could save this information to a database model
-        # Hotel.objects.create(...)
+            # Create hotel instance
+            hotel = Hotel(
+                hotel_name=hotel_name,
+                location=location,
+                phone=phone,
+                hotel_description=hotel_description,
+                username=username,
+                email=email,
+                password=password
+            )
+            hotel.save()
 
-        messages.success(request, "Registration successful! You can now log in.")
+            return HttpResponse('Hotel registered successfully!')
+    else:
+        form = HotelRegistrationForm()
 
-        return redirect('hotel_login')
-
-    return render(request, 'hotel_register.html')
+    return render(request, 'hotel_register.html', {'form': form})
 
 @login_required
 def update_profile_view(request):
@@ -203,5 +217,3 @@ def delete_booking(request, booking_id):
         return JsonResponse({'success': True}) 
 
     return JsonResponse({'success': False}, status=400)
-
-
