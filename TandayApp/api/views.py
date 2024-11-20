@@ -251,3 +251,30 @@ def listings_view(request):
 
         listings_list = list(listings)  # Convert QuerySet to a list
         return JsonResponse(listings_list, safe=False)
+
+@login_required
+def update_listing(request, listing_id):
+    # Retrieve the listing based on the ID
+    listing = get_object_or_404(Listing, id=listing_id, hotel_owner=request.user)
+    
+    if request.method == 'POST':
+        form = ListingForm(request.POST, request.FILES, instance=listing)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Your listing has been updated successfully!')
+            return redirect('hotel_dashboard')
+    else:
+        form = ListingForm(instance=listing)
+
+    return render(request, 'update_listing.html', {'form': form, 'listing': listing})
+
+@login_required
+def delete_listing(request, listing_id):
+    listing = get_object_or_404(Listing, id=listing_id, hotel_owner=request.user)
+
+    if request.method == 'POST':
+        listing.delete()
+        messages.success(request, 'Your listing has been deleted successfully!')
+        return redirect('hotel_dashboard')
+
+    return render(request, 'delete_listing.html', {'listing': listing})

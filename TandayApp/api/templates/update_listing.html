@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Listing - Tanday</title>
+    <title>Update Listing - Tanday</title>
     <style>
         /* Reset and base styles */
         * {
@@ -102,7 +102,7 @@
             <nav>
                 <a href="{% url 'hotel_dashboard' %}" class="active">Dashboard</a>
                 <a href="{% url 'add_listing' %}">Add Listing</a>
-                <!-- <a href="{% url 'my_bookings' %}">My Bookings</a> -->
+                <a href="{% url 'my_bookings' %}">My Bookings</a>
                 <a href="/logout">Log Out</a>
             </nav>
         </div>
@@ -110,13 +110,14 @@
 
     <div class="container">
         <div class="form-container">
-            <h1>Add New Listing</h1>
+            <h1>Update Listing: {{ listing.title }}</h1>
 
-            <form method="POST" enctype="multipart/form-data">
+            <form method="POST" enctype="multipart/form-data" class="update-listing-form">
                 {% csrf_token %}
                 {{ form.as_p }}
+
                 <div class="form-actions">
-                    <button type="submit" class="btn">Submit</button>
+                    <button type="submit" class="btn">Update Listing</button>
                     <a href="{% url 'hotel_dashboard' %}" class="btn btn-secondary">Cancel</a>
                 </div>
             </form>
