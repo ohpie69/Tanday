@@ -1,0 +1,28 @@
+<!-- hotel_dashboard.html -->
+
+{% block content %}
+<h1>Hotel Dashboard</h1>
+
+<a href="{% url 'add_listing' %}">Add New Listing</a>
+
+<h2>Your Listings</h2>
+<div class="listings">
+    {% for listing in listings %}
+    <div class="listing-card">
+        <div class="listing-image">
+            <img src="{{ listing.image.url }}" alt="{{ listing.title }}" loading="lazy">
+        </div>
+        <div class="listing-content">
+            <h3>{{ listing.title }}</h3>
+            <p>{{ listing.description }}</p>
+            <p>{{ listing.price_per_night }}</p>
+            <p>Filters: 
+                {% for filter in listing.filters.all %}
+                    <span>{{ filter.name }}</span>
+                {% endfor %}
+            </p>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

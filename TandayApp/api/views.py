@@ -2,9 +2,9 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
-from .forms import UserRegistrationForm, UserUpdateForm, BookingForm, HotelRegistrationForm, HotelLoginForm
+from .forms import UserRegistrationForm, UserUpdateForm, BookingForm, HotelRegistrationForm, HotelLoginForm, ListingForm
 from django.contrib import messages
-from .models import Booking, Hotel
+from .models import Booking, Hotel, Listing, Filter
 from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.hashers import check_password
 
@@ -51,7 +51,8 @@ def hotel_login_view(request):
 @login_required
 def home_view(request):
     username = request.session.get('username', 'Guest')
-    return render(request, 'home.html', {'username': username})
+    listings = Listing.objects.all()  # Fetch all listings
+    return render(request, 'home.html', {'username': username, 'listings': listings})
 
 def register_view(request):
     if request.method == 'POST':
@@ -217,3 +218,36 @@ def delete_booking(request, booking_id):
         return JsonResponse({'success': True}) 
 
     return JsonResponse({'success': False}, status=400)
+
+@login_required
+def hotel_dashboard(request):
+    # Get the listings for the logged-in hotel owner
+    listings = Listing.objects.filter(hotel_owner=request.user)
+    return render(request, 'hotel_dashboard.html', {'listings': listings})
+
+@login_required
+def add_listing(request):
+    if request.method == 'POST':
+        form = ListingForm(request.POST, request.FILES)
+        if form.is_valid():
+            listing = form.save(commit=False)
+            listing.hotel_owner = request.user
+            listing.save()
+            return redirect('hotel_dashboard')
+    else:
+        form = ListingForm()
+
+    return render(request, 'add_listing.html', {'form': form})
+
+def listings_view(request):
+    if request.method == 'GET':
+        filter_name = request.GET.get('filter', None)
+        if filter_name:
+            # Filter listings based on the selected filter
+            listings = Listing.objects.filter(filters__name=filter_name).values('id', 'title', 'description', 'price_per_night', 'image')
+        else:
+            # Fetch all listings if no filter is applied
+            listings = Listing.objects.all().values('id', 'title', 'description', 'price_per_night', 'image')
+
+        listings_list = list(listings)  # Convert QuerySet to a list
+        return JsonResponse(listings_list, safe=False)

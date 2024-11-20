@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
-from .models import Booking, Hotel
+from .models import Booking, Hotel, Listing, Filter
 
 # User Registration Form
 class UserRegistrationForm(forms.ModelForm):
@@ -150,3 +150,13 @@ class BookingForm(forms.ModelForm):
             raise forms.ValidationError("Check-out date must be after the check-in date.")
 
         return cleaned_data
+    
+class ListingForm(forms.ModelForm):
+    filters = forms.ModelMultipleChoiceField(
+        queryset=Filter.objects.all(),
+        widget=forms.CheckboxSelectMultiple
+    )
+
+    class Meta:
+        model = Listing
+        fields = ['title', 'description', 'price_per_night', 'image', 'filters']

@@ -300,93 +300,101 @@
         </div>
 
         <div class="listings" id="listings-container">
-            <!-- Listing cards will be dynamically inserted here -->
+            {% for listing in listings %}
+                <div class="listing-card">
+                    <div class="listing-image">
+                        <img src="{{ listing.image.url }}" alt="{{ listing.title }}" loading="lazy">
+                    </div>
+                    <div class="listing-content">
+                        <h3 class="listing-title">{{ listing.title }}</h3>
+                        <p class="listing-details">{{ listing.description }}</p>
+                        <p class="listing-price">₱{{ listing.price_per_night }} night</p>
+                    </div>
+                </div>
+            {% empty %}
+                <p>No listings available.</p>
+            {% endfor %}
         </div>
     </main>
 
     <div id="spinner" class="loading-spinner"></div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const loadingLinks = document.querySelectorAll('.loading-link');
             const loadingSpinner = document.getElementById('spinner');
-
+            const filterButtons = document.querySelectorAll('.filter-button');
+            const listingsContainer = document.getElementById('listings-container');
+    
+            // Function to handle loading link clicks
             loadingLinks.forEach(link => {
-                link.addEventListener('click', function(e) {
+                link.addEventListener('click', function (e) {
                     e.preventDefault();
                     loadingSpinner.style.display = 'flex';
-
+    
                     setTimeout(() => {
                         window.location.href = this.getAttribute('href');
                     }, 1000);
                 });
             });
-
-            const filterButtons = document.querySelectorAll('.filter-button');
-            const listingsContainer = document.getElementById('listings-container');
-
-            const listings = [
-                { title: "Tanday Karon, Phuket", details: "Stay with Sarah", price: "₱7,541 night", img: "{% static 'serene.avif' %}", filters: ["Amazing views", "Tiny homes"] },
-                { title: "Tanday Unya, Bangkok", details: "Stay with John", price: "₱9,270 night", img: "{% static 'modern.jpg' %}", filters: ["Tropical", "Beachfront", "Countryside"] },
-                { title: "Tanday, Manila", details: "Stay with Maria", price: "₱2,211 night", img: "{% static 'luxury.jpg' %}", filters: ["Rooms"] },
-                { title: "Tanday Karon, Baguio", details: "Stay with Monica", price: "₱1,614 night", img: "{% static 'kanipaan.jpg' %}", filters: ["Rooms"] },
-                { title: "Tanday Unya, Cebu", details: "Stay with David", price: "₱3,065 night", img: "{% static 'cozy.jpg' %}", filters: ["Rooms"] },
-                { title: "Tanday, Boracay", details: "Stay with Agnes", price: "₱2,812 night", img: "{% static 'blue.jpg' %}", filters: ["Rooms"] }
-            ];
-
+    
+            // Function to display filtered listings
             function displayFilteredListings() {
-                const activeFilter = document.querySelector('.filter-button.active').innerText;
+                const activeFilter = document.querySelector('.filter-button.active')?.innerText.trim();
                 listingsContainer.innerHTML = ''; // Clear previous listings
-
-                const filteredListings = listings.filter(listing => listing.filters.includes(activeFilter));
-
+    
+                // Fetch the listings from the server
+                const filteredListings = activeFilter
+                    ? [...listings].filter(listing => listing.filters.includes(activeFilter))
+                    : [...listings]; // Show all listings if no filter is active
+    
                 if (filteredListings.length > 0) {
-                    filteredListings.forEach(listing => {
-                        listingsContainer.innerHTML += `
-                            <div class="listing-card">
-                                <div class="listing-image">
-                                    <img src="${listing.img}" alt="${listing.title}" loading="lazy">
-                                </div>
-                                <div class="listing-content">
-                                    <h3 class="listing-title">${listing.title}</h3>
-                                    <p class="listing-details">${listing.details}</p>
-                                    <p class="listing-price">${listing.price}</p>
-                                </div>
+                    listingsContainer.innerHTML = filteredListings.map(listing => `
+                        <div class="listing-card">
+                            <div class="listing-image">
+                                <img src="${listing.img}" alt="${listing.title}" loading="lazy">
                             </div>
-                        `;
-                    });
+                            <div class="listing-content">
+                                <h3 class="listing-title">${listing.title}</h3>
+                                <p class="listing-details">${listing.details}</p>
+                                <p class="listing-price">${listing.price}</p>
+                            </div>
+                        </div>
+                    `).join('');
                 } else {
                     listingsContainer.innerHTML = '<p>No listings available for this filter.</p>';
                 }
             }
-
+    
+            // Event listeners for filter buttons
             filterButtons.forEach(button => {
-                button.addEventListener('click', function() {
+                button.addEventListener('click', function () {
                     filterButtons.forEach(btn => btn.classList.remove('active'));
                     this.classList.add('active');
-                    displayFilteredListings(); // Display listings based on the active filter
+                    displayFilteredListings();
                 });
             });
-
+    
             // Back button functionality
-            document.getElementById('back-button').addEventListener('click', function() {
+            document.getElementById('back-button').addEventListener('click', function () {
                 window.location.href = '{% url "home" %}'; // Adjust the URL to your home page
             });
-
-            // Initial display
+    
+            // Initial display of listings
             displayFilteredListings();
-        });
-
-        // Your existing load event listener
-        window.addEventListener('load', function() {
-            const spinner = document.querySelector('.loading-spinner');
-            spinner.style.display = 'flex';
-
-            setTimeout(() => {
-                spinner.style.display = 'none';
-            }, 2000);
+    
+            // Loading spinner functionality
+            window.addEventListener('load', function () {
+                const spinner = document.querySelector('.loading-spinner');
+                spinner.style.display = 'flex';
+    
+                setTimeout(() => {
+                    spinner.style.display = 'none';
+                }, 2000);
+            });
         });
     </script>
+    
 </body>
 </html>
 </html>
