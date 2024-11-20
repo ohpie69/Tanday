@@ -4,8 +4,9 @@
 
 <form method="POST">
     {% csrf_token %}
-    <button type="submit">Yes, delete it</button>
+    <div class="form-actions">
+        <button type="submit" class="btn">Yes, delete it</button>
+        <a href="{% url 'hotel_dashboard' %}" class="btn btn-secondary">Cancel</a>
+    </div>
 </form>
-
-<a href="{% url 'hotel_dashboard' %}">Cancel</a>
 {% endblock %}

@@ -135,6 +135,43 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+
+        /* Button styles */
+        .btn {
+            background: linear-gradient(90deg, #8e24aa, #6a1b9a);
+            color: white;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 9999px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .btn:hover {
+            background: linear-gradient(90deg, #6a1b9a, #8e24aa);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #e0e0e0;
+            color: #333;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 9999px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .btn-secondary:hover {
+            background: #bdbdbd;
+            transform: translateY(-2px);
+        }
     </style>
 </head>
 <body>
@@ -165,10 +202,10 @@
                         <h3 class="listing-title">{{ listing.title }}</h3>
                         <p class="listing-details">{{ listing.description }}</p>
                         <p class="listing-price">₱{{ listing.price_per_night }} night</p>
-                        <a href="{% url 'update_listing' listing.id %}">Edit</a>
+                        <a href="{% url 'update_listing' listing.id %}" class="btn">Edit</a>
                         <form action="{% url 'delete_listing' listing.id %}" method="POST" style="display:inline;">
                             {% csrf_token %}
-                            <button type="submit" onclick="return confirm('Are you sure you want to delete this listing?');">Delete</button>
+                            <button type="submit" class="btn btn-secondary" onclick="return confirm('Are you sure you want to delete this listing?');">Delete</button>
                         </form>
                     </div>
                 </div>
