@@ -14,6 +14,8 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from django.conf import settings
+from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path
 from api.views import login_view, register_view, home_view, booking_page, logout_view,hotel_login_view, hotel_registration_view, success, book_now, landing_page_view, my_bookings, edit_booking, delete_booking, hotel_dashboard, add_listing, listings_view, update_listing, delete_listing
@@ -38,4 +40,4 @@ urlpatterns = [
     path('listings/', listings_view, name='listings'),
      path('update_listing/<int:listing_id>/', update_listing, name='update_listing'),
     path('delete_listing/<int:listing_id>/', delete_listing, name='delete_listing'),
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
