@@ -287,19 +287,21 @@
 
     <main class="container">
         <div class="filters" style="margin-top: 20px;">
-            <button class="filter-button active">Rooms</button>
-            <button class="filter-button">Amazing views</button>
-            <button class="filter-button">Tiny homes</button>
-            <button class="filter-button">Cabins</button>
-            <button class="filter-button">Tropical</button>
-            <button class="filter-button">Amazing pools</button>
-            <button class="filter-button">Beachfront</button>
-            <button class="filter-button">Countryside</button>
-            <button class="filter-button">Skiing</button>
-            <button class="filter-button">Bed & breakfasts</button>
+            <button class="filter-button active" data-filter="">All</button>
+            <button class="filter-button" data-filter="Rooms">Rooms</button>
+            <button class="filter-button" data-filter="Amazing views">Amazing views</button>
+            <button class="filter-button" data-filter="Tiny homes">Tiny homes</button>
+            <button class="filter-button" data-filter="Cabins">Cabins</button>
+            <button class="filter-button" data-filter="Tropical">Tropical</button>
+            <button class="filter-button" data-filter="Amazing pools">Amazing pools</button>
+            <button class="filter-button" data-filter="Beachfront">Beachfront</button>
+            <button class="filter-button" data-filter="Countryside">Countryside</button>
+            <button class="filter-button" data-filter="Skiing">Skiing</button>
+            <button class="filter-button" data-filter="Bed & breakfasts">Bed & breakfasts</button>
         </div>
 
-        <div class="listings" id="listings-container">
+        <div id="listings-container">
+            <!-- Listings will be dynamically inserted here -->
             {% for listing in listings %}
                 <div class="listing-card">
                     <div class="listing-image">
@@ -311,8 +313,6 @@
                         <p class="listing-price">₱{{ listing.price_per_night }} night</p>
                     </div>
                 </div>
-            {% empty %}
-                <p>No listings available.</p>
             {% endfor %}
         </div>
     </main>
@@ -321,77 +321,44 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            const loadingLinks = document.querySelectorAll('.loading-link');
-            const loadingSpinner = document.getElementById('spinner');
             const filterButtons = document.querySelectorAll('.filter-button');
             const listingsContainer = document.getElementById('listings-container');
-    
-            // Function to handle loading link clicks
-            loadingLinks.forEach(link => {
-                link.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    loadingSpinner.style.display = 'flex';
-    
-                    setTimeout(() => {
-                        window.location.href = this.getAttribute('href');
-                    }, 1000);
-                });
-            });
-    
-            // Function to display filtered listings
-            function displayFilteredListings() {
-                const activeFilter = document.querySelector('.filter-button.active')?.innerText.trim();
-                listingsContainer.innerHTML = ''; // Clear previous listings
-    
-                // Fetch the listings from the server
-                const filteredListings = activeFilter
-                    ? [...listings].filter(listing => listing.filters.includes(activeFilter))
-                    : [...listings]; // Show all listings if no filter is active
-    
-                if (filteredListings.length > 0) {
-                    listingsContainer.innerHTML = filteredListings.map(listing => `
-                        <div class="listing-card">
-                            <div class="listing-image">
-                                <img src="${listing.img}" alt="${listing.title}" loading="lazy">
-                            </div>
-                            <div class="listing-content">
-                                <h3 class="listing-title">${listing.title}</h3>
-                                <p class="listing-details">${listing.details}</p>
-                                <p class="listing-price">${listing.price}</p>
-                            </div>
-                        </div>
-                    `).join('');
-                } else {
-                    listingsContainer.innerHTML = '<p>No listings available for this filter.</p>';
-                }
-            }
-    
-            // Event listeners for filter buttons
+
             filterButtons.forEach(button => {
                 button.addEventListener('click', function () {
+                    const filterValue = this.getAttribute('data-filter');
+                    displayFilteredListings(filterValue);
+                    // Update active button
                     filterButtons.forEach(btn => btn.classList.remove('active'));
                     this.classList.add('active');
-                    displayFilteredListings();
                 });
             });
-    
-            // Back button functionality
-            document.getElementById('back-button').addEventListener('click', function () {
-                window.location.href = '{% url "home" %}'; // Adjust the URL to your home page
-            });
-    
-            // Initial display of listings
-            displayFilteredListings();
-    
-            // Loading spinner functionality
-            window.addEventListener('load', function () {
-                const spinner = document.querySelector('.loading-spinner');
-                spinner.style.display = 'flex';
-    
-                setTimeout(() => {
-                    spinner.style.display = 'none';
-                }, 2000);
-            });
+
+            function displayFilteredListings(filter) {
+                fetch(`/listings?filter=${filter}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        listingsContainer.innerHTML = ''; // Clear previous listings
+                        if (data.length > 0) {
+                            data.forEach(listing => {
+                                listingsContainer.innerHTML += `
+                                    <div class="listing-card">
+                                        <div class="listing-image">
+                                            <img src="${listing.image}" alt="${listing.title}" loading="lazy">
+                                        </div>
+                                        <div class="listing-content">
+                                            <h3 class="listing-title">${listing.title}</h3>
+                                            <p class="listing-details">${listing.description}</p>
+                                            <p class="listing-price">₱${listing.price_per_night} night</p>
+                                        </div>
+                                    </div>
+                                `;
+                            });
+                        } else {
+                            listingsContainer.innerHTML = '<p>No listings available for this filter.</p>';
+                        }
+                    });
+            }
         });
     </script>
     
