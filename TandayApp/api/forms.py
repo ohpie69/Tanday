@@ -41,6 +41,48 @@ class UserRegistrationForm(forms.ModelForm):
         if commit:
             user.save()
         return user
+class HotelRegistrationForm(forms.ModelForm):
+    password = forms.CharField(
+        widget=forms.PasswordInput(attrs={'class': 'form-control'}),
+        label="Password"
+    )
+    password_confirm = forms.CharField(
+        widget=forms.PasswordInput(attrs={'class': 'form-control'}),
+        label="Confirm Password"
+    )
+
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name', 'username', 'email']
+        widgets = {
+            'first_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'last_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'username': forms.TextInput(attrs={'class': 'form-control'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control'}),
+        }
+        help_texts = {
+            'username': '',  # Optional: Remove username default help text
+        }
+
+    def clean(self):
+        cleaned_data = super().clean()
+        password = cleaned_data.get("password")
+        password_confirm = cleaned_data.get("password_confirm")
+
+        if password and password_confirm and password != password_confirm:
+            raise forms.ValidationError("Passwords do not match.")
+
+        return cleaned_data
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.set_password(self.cleaned_data["password"])
+        user.is_staff = True  # Assuming all users are staff
+        if commit:
+            user.save()
+        return user
+
+
 
 # User Update Form
 class UserUpdateForm(forms.ModelForm):
@@ -49,47 +91,47 @@ class UserUpdateForm(forms.ModelForm):
         fields = ['username', 'email']
 
 # Hotel Registration Form
-class HotelRegistrationForm(forms.ModelForm):
-    password = forms.CharField(
-        widget=forms.PasswordInput(attrs={'class': 'form-control'}), 
-        label="Password"
-    )
-    password_confirm = forms.CharField(
-        widget=forms.PasswordInput(attrs={'class': 'form-control'}), 
-        label="Confirm Password"
-    )
+# class HotelRegistrationForm(forms.ModelForm):
+#     password = forms.CharField(
+#         widget=forms.PasswordInput(attrs={'class': 'form-control'}), 
+#         label="Password"
+#     )
+#     password_confirm = forms.CharField(
+#         widget=forms.PasswordInput(attrs={'class': 'form-control'}), 
+#         label="Confirm Password"
+#     )
     
-    class Meta:
-        model = Hotel
-        fields = ['hotel_name', 'location', 'phone', 'hotel_description', 'username', 'email', 'password']
-        widgets = {
-            'hotel_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Hotel Name'}),
-            'location': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Location'}),
-            'phone': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '+65'}),
-            'hotel_description': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Hotel Description'}),
-            'username': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Username'}),
-            'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Email'}),
-        }
-        help_texts = {
-            'hotel_name': '',
-            'location': '',
-            'phone': '',
-            'hotel_description': '',
-            'username': '',
-            'email': '',
-            'password': '',
-        }
+#     class Meta:
+#         model = Hotel
+#         fields = ['hotel_name', 'location', 'phone', 'hotel_description', 'username', 'email', 'password']
+#         widgets = {
+#             'hotel_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Hotel Name'}),
+#             'location': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Location'}),
+#             'phone': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '+65'}),
+#             'hotel_description': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Hotel Description'}),
+#             'username': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Username'}),
+#             'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Email'}),
+#         }
+#         help_texts = {
+#             'hotel_name': '',
+#             'location': '',
+#             'phone': '',
+#             'hotel_description': '',
+#             'username': '',
+#             'email': '',
+#             'password': '',
+#         }
 
-    def clean(self):
-        cleaned_data = super().clean()
-        password = cleaned_data.get('password')
-        password_confirm = cleaned_data.get('password_confirm')
+#     def clean(self):
+#         cleaned_data = super().clean()
+#         password = cleaned_data.get('password')
+#         password_confirm = cleaned_data.get('password_confirm')
 
-        # Validate that passwords match
-        if password != password_confirm:
-            raise forms.ValidationError("Passwords do not match")
+#         # Validate that passwords match
+#         if password != password_confirm:
+#             raise forms.ValidationError("Passwords do not match")
         
-        return cleaned_data
+#         return cleaned_data
 
 # Hotel Login Form
 class HotelLoginForm(forms.Form):

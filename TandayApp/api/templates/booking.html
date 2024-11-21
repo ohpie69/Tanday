@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -137,7 +138,7 @@
         /* Room types grid */
         .room-types {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             gap: 1rem;
             margin-top: 0.5rem;
         }
@@ -228,7 +229,7 @@
         <h1>TANDAY NA!</h1>
         <h2>Welcome, {{ username }}!</h2>
         
-        <form class="booking-form" method="post" action="{% url 'success' %}">
+        <form class="booking-form" method="post" action="{% url 'book_now' %}">
             {% csrf_token %}
             {{ form.as_p }}
             
@@ -260,40 +261,21 @@
 
             <div class="form-group">
                 <label>Room Types (Select all that apply)</label>
+                {% for listings in listing %}
                 <div class="room-types">
                     <label class="room-type-item">
-                        <input type="checkbox" name="room_type" value="gaming-room">
-                        Gaming Room
-                    </label>
-                    <label class="room-type-item">
-                        <input type="checkbox" name="room_type" value="pool-area">
-                        Pool Area
-                    </label>
-                    <label class="room-type-item">
-                        <input type="checkbox" name="room_type" value="sunbed">
-                        Sunbed
-                    </label>
-                    <label class="room-type-item">
-                        <input type="checkbox" name="room_type" value="cabin">
-                        Cabin
-                    </label>
-                    <label class="room-type-item">
-                        <input type="checkbox" name="room_type" value="canoe">
-                        Canoe
-                    </label>
-                    <label class="room-type-item">
-                        <input type="checkbox" name="room_type" value="countryside">
-                        Countryside
-                    </label>
-                    <label class="room-type-item">
-                        <input type="checkbox" name="room_type" value="home">
-                        Home
-                    </label>
-                    <label class="room-type-item">
-                        <input type="checkbox" name="room_type" value="historic">
-                        Historic
+                        <input type="checkbox" name="room_type" value="{{ listings.title }}">
+                        <div style="display: flex; flex-direction: column;">
+                            <span>
+                                {{ listings.title }}
+                            </span>
+                            <span>
+                                <img src="{{ listings.image.url }}" alt="{{ listing.title }}" loading="lazy" width="200px" height="100px">
+                            </span>
+                        </div>
                     </label>
                 </div>
+                {%endfor%}
             </div>
 
             <button type="submit">Book Now</button>

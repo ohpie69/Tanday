@@ -21,14 +21,14 @@ from django.urls import path
 from api.views import login_view, register_view, home_view, booking_page, logout_view,hotel_login_view, hotel_registration_view, success, book_now, landing_page_view, my_bookings, edit_booking, delete_booking, hotel_dashboard, add_listing, listings_view, update_listing, delete_listing
 
 urlpatterns = [
-    path('', landing_page_view),
+    path('', landing_page_view, name='landing'),
     path('admin/', admin.site.urls),
     path('login/', login_view, name='login'),
-     path('hotel-dashboard/', hotel_dashboard, name='hotel_dashboard'),
+    path('hotel-dashboard/', hotel_dashboard, name='hotel_dashboard'),
     path('add-listing/', add_listing, name='add_listing'),
     path('register/', register_view, name='register'),
     path('hotel_login/', hotel_login_view, name='hotel_login'),
-     path('hotel_register/', hotel_registration_view, name='hotel_register'),
+    path('hotel_register/', hotel_registration_view, name='hotel_register'),
     path('home/', home_view, name='home'),
     path('booking/', booking_page, name='booking'),
     path('logout/', logout_view, name='logout'),

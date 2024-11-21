@@ -92,7 +92,7 @@
                     showAlert("{{ error }}");
                 </script>
             {% endif %}
-            <form method="post" action="{% url 'login' %}">
+            <form method="post" action="{% url 'hotel_login' %}">
                 {% csrf_token %}
                 <label for="username">Email or Phone Number</label>
                 <input type="text" id="username" name="username" placeholder="Email or Phone Number" required>
