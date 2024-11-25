@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth import login, authenticate, logout
+from django.contrib.auth import login, authenticate, logout, update_session_auth_hash
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from .forms import UserRegistrationForm, UserUpdateForm, BookingForm, HotelRegistrationForm, HotelLoginForm, ListingForm
@@ -7,6 +7,10 @@ from django.contrib import messages
 from .models import Booking, Hotel, Listing, Filter
 from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.hashers import check_password
+import logging
+
+# Set up logging
+logger = logging.getLogger(__name__)
 
 # Create your views here.
 
@@ -45,9 +49,22 @@ def hotel_login_view(request):
 
 @login_required
 def home_view(request):
-    username = request.session.get('username', 'Guest')
-    listings = Listing.objects.all()  # Fetch all listings
-    return render(request, 'home.html', {'username': username, 'listings': listings})
+    search_query = request.GET.get('search', '')
+    listings = Listing.objects.all()  # Get all listings by default
+
+    if search_query:
+        # Filter listings by title or description
+        listings = listings.filter(
+            title__icontains=search_query
+        ) | listings.filter(
+            description__icontains=search_query
+        )
+
+    context = {
+        'listings': listings,
+        'search_query': search_query,
+    }
+    return render(request, 'home.html', context)
 
 def register_view(request):
     if request.method == 'POST':
@@ -263,3 +280,34 @@ def delete_listing(request, listing_id):
         return redirect('hotel_dashboard')
 
     return render(request, 'delete_listing.html', {'listing': listing})
+
+@login_required
+def edit_user(request):
+    if request.method == 'POST':
+        user = request.user
+        username = request.POST.get('username')
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        confirm_password = request.POST.get('confirm-password')
+        stay_logged_in = request.POST.get('stay_logged_in') == 'true'
+
+        # Update user details
+        user.username = username
+        user.email = email
+
+        if password:
+            if password == confirm_password:
+                user.set_password(password)
+                user.save()
+                if stay_logged_in:
+                    update_session_auth_hash(request, user)
+                messages.success(request, 'Your password has been changed successfully.')
+            else:
+                messages.error(request, 'Passwords do not match.')
+        else:
+            user.save()
+            messages.success(request, 'Your profile has been updated successfully.')
+
+        return redirect('edit_user')
+
+    return render(request, 'edit_user.html')

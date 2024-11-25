@@ -58,6 +58,21 @@
             color: white;
             
         }
+        .user-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .user-actions button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.25rem;
+            transition: transform 0.3s ease;
+        }
+        .user-actions button:hover {
+            transform: scale(1.1);
+        }
         .search-user {
             display: flex;
             align-items: center;
@@ -233,6 +248,13 @@
             background-color: #8e24aa;
             color: white;
         }
+        a {
+            text-decoration: none;
+            color: #333;
+        }
+        a:hover {
+            color: #333;
+        }
     </style>
 </head>
 <body>
@@ -240,7 +262,7 @@
     <header>
         <div class="container header-content">
             <div class="balay">
-                <a href="/home" class="logo" ><img src="{% static 'logo.png' %}" alt="Tanday Logo" style="width: 40px; height: 40px; border-radius: 50%; margin-left: 20px;">Tanday</a>                
+                <a href="/home/" class="logo" ><img src="{% static 'logo.png' %}" alt="Tanday Logo" style="width: 40px; height: 40px; border-radius: 50%; margin-left: 20px;">Tanday</a>                
           </div>        
             <nav>
                 <a class="active">Tanday</a>
@@ -249,13 +271,15 @@
             </nav>
             <div class="search-user">
                 <div class="search-bar">
-                    <input type="text" placeholder="Search destinations">
-                    <button aria-label="Search">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="11" cy="11" r="8"></circle>
-                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                        </svg>
-                    </button>
+                    <form method="GET" action="{% url 'home' %}">
+                        <input type="text" name="search" placeholder="Search destinations" value="{{ search_query }}">
+                        <button type="submit" aria-label="Search">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                            </svg>
+                        </button>
+                    </form>
                 </div>
                 <div class="user-actions">
                     <span>{{ request.user.username }}</span>
@@ -275,7 +299,7 @@
                             </svg>
                         </button>
                         <div class="dashboard-menu">
-                            <a href="/edit-account">Edit Account</a>
+                            <a href="{% url 'edit_user'%}">Edit Account</a>
                             <a href="{% url 'my_bookings' %}">See Bookings</a>
                             <a href="{% url 'logout'%}">Log Out</a>
                         </div>
@@ -301,18 +325,21 @@
         </div>
 
         <div id="listings-container">
-            <!-- Listings will be dynamically inserted here -->
             {% for listing in listings %}
-                <div class="listing-card">
-                    <div class="listing-image">
-                        <img src="{{ listing.image.url }}" alt="{{ listing.title }}" loading="lazy">
+                <a href="{% url 'booking'%}">
+                    <div class="listing-card">
+                        <div class="listing-image">
+                            <img src="{{ listing.image.url }}" alt="{{ listing.title }}" loading="lazy">
+                        </div>
+                        <div class="listing-content">
+                            <h3 class="listing-title">{{ listing.title }}</h3>
+                            <p class="listing-details">{{ listing.description }}</p>
+                            <p class="listing-price">₱{{ listing.price_per_night }} night</p>
+                        </div>
                     </div>
-                    <div class="listing-content">
-                        <h3 class="listing-title">{{ listing.title }}</h3>
-                        <p class="listing-details">{{ listing.description }}</p>
-                        <p class="listing-price">₱{{ listing.price_per_night }} night</p>
-                    </div>
-                </div>
+                </a>
+            {% empty %}
+                <h1>No one us here but us chickens.</h1>
             {% endfor %}
         </div>
     </main>
@@ -363,5 +390,4 @@
     </script>
     
 </body>
-</html>
 </html>

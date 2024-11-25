@@ -215,7 +215,7 @@
             </nav>
             <div class="user-info">
                 <span>{{ request.user.username }}</span>
-                <a href="{% url 'home' %}">
+                <a href="{% url 'logout' %}">
                     <img src="{% static 'sign-out.png' %}" alt="Sign Out">
                 </a>
                 <a href="{% url 'my_bookings' %}">
