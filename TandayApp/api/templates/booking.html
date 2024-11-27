@@ -37,10 +37,22 @@
         }
 
         .logo {
+            display: flex;
+            align-items: center;
             font-size: 1.5rem;
             font-weight: bold;
             color: #8e24aa;
             text-decoration: none;
+            transition: transform 0.3s ease;
+        }
+        .logo img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        .logo:hover {
+            transform: scale(1.05);
         }
 
         nav {
@@ -207,7 +219,9 @@
     {% load static %}
     <header>
         <div class="header-content">
-            <a href="{% url 'home' %}" class="logo">Tanday</a>
+            <div class="balay">
+                <a href="/home/" class="logo" ><img src="{% static 'logo.png' %}" alt="Tanday Logo" style="width: 40px; height: 40px; border-radius: 50%; margin-left: 20px;">Tanday</a>                
+            </div> 
             <nav>
                 <a href="{% url 'home' %}">Tanday</a>
                 <a class="active">Tanday Karon</a>

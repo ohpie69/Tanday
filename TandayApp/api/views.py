@@ -242,17 +242,12 @@ def add_listing(request):
     return render(request, 'add_listing.html', {'form': form})
 
 def listings_view(request):
-    if request.method == 'GET':
-        filter_name = request.GET.get('filter', None)
-        if filter_name:
-            # Filter listings based on the selected filter
-            listings = Listing.objects.filter(filters__name=filter_name).values('id', 'title', 'description', 'price_per_night', 'image')
-        else:
-            # Fetch all listings if no filter is applied
-            listings = Listing.objects.all().values('id', 'title', 'description', 'price_per_night', 'image')
-
-        listings_list = list(listings)  # Convert QuerySet to a list
-        return JsonResponse(listings_list, safe=False)
+    filter_value = request.GET.get('filter', '')
+    if filter_value:
+        listings = Listing.objects.filter(filters__name=filter_value)  # Assuming you have a ManyToMany relationship
+    else:
+        listings = Listing.objects.all()
+    return render(request, 'home.html', {'listings': listings, 'search_query': request.GET.get('search', '')})
 
 @login_required
 def update_listing(request, listing_id):
