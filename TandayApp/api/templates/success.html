@@ -90,12 +90,15 @@
         <!-- Booking details -->
         <div class="details">
             <p><strong>Booking Number:</strong> {{ booking.booking_number }}</p>
-            <p><strong>Name:</strong> {{ booking.name }}</p>
+            <p><strong>Hotel:</strong> {{ booking.room.listing.title }}</p>
+            <p><strong>Name:</strong> {{ booking.name|capfirst }}</p>
             <p><strong>Email:</strong> {{ booking.email }}</p>
             <p><strong>Check-In Date:</strong> {{ booking.check_in }}</p>
             <p><strong>Check-Out Date:</strong> {{ booking.check_out }}</p>
             <p><strong>Number of Guests:</strong> {{ booking.guests }}</p>
-            <p><strong>Room Type:</strong> {{ booking.room_types }}</p>
+            <p><strong>Room Type:</strong> {{ booking.room.name }}</p>
+            <p><strong>Number of beds:</strong> {{ booking.room.number_of_beds }}</p>
+            <p><strong>Room price:</strong> ₱{{ booking.room.price }}</p>
         </div>
 
         <!-- Go back to home button -->

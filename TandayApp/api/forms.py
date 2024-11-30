@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
-from .models import Booking, Hotel, Listing, Filter
+from .models import Booking, Hotel, Listing, Filter,Rooms
 
 # User Registration Form
 class UserRegistrationForm(forms.ModelForm):
@@ -168,15 +168,30 @@ ROOM_TYPE_CHOICES = [
 ]
 
 class BookingForm(forms.ModelForm):
-    room_types = forms.MultipleChoiceField(
-        choices=ROOM_TYPE_CHOICES,
-        widget=forms.CheckboxSelectMultiple,
-        label="Room Types"
-    )
-
+   
     class Meta:
         model = Booking
-        fields = ['name', 'email', 'check_in', 'check_out', 'guests', 'room_types']
+        fields = ['name', 'email', 'check_in', 'check_out', 'guests', 'room']
+        widgets = {
+            'check_in': forms.DateInput(attrs={'type': 'date'}),
+            'check_out': forms.DateInput(attrs={'type': 'date'}),
+        }
+
+    def clean(self):
+        cleaned_data = super().clean()
+        check_in = cleaned_data.get('check_in')
+        check_out = cleaned_data.get('check_out')
+
+        # Check that check_out is after check_in
+        if check_in and check_out and check_out <= check_in:
+            raise forms.ValidationError("Check-out date must be after the check-in date.")
+
+        return cleaned_data
+class EditBookingForm(forms.ModelForm):
+   
+    class Meta:
+        model = Booking
+        fields = ['name', 'email', 'check_in', 'check_out', 'guests']
         widgets = {
             'check_in': forms.DateInput(attrs={'type': 'date'}),
             'check_out': forms.DateInput(attrs={'type': 'date'}),
@@ -195,10 +210,27 @@ class BookingForm(forms.ModelForm):
     
 class ListingForm(forms.ModelForm):
     filters = forms.ModelMultipleChoiceField(
-        queryset=Filter.objects.all(),
+        queryset=Filter.objects.none(),
         widget=forms.CheckboxSelectMultiple
     )
-
     class Meta:
         model = Listing
-        fields = ['title', 'description', 'price_per_night', 'image', 'filters']
+        fields = ['title', 'description', 'price_per_night', 'filters', 'image']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['filters'].queryset = Filter.objects.all()  
+    def clean(self):
+        super().clean()
+
+
+class RoomForm(forms.ModelForm):
+    class Meta:
+        model = Rooms
+        fields = ['name', 'number_of_beds', 'price']
+        labels = {
+                'name': 'Room Name',  
+                'number_of_beds': 'Number of Beds',  
+                'price': 'Room Price',  
+            }
+

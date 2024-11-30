@@ -2,12 +2,14 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate, logout, update_session_auth_hash
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
-from .forms import UserRegistrationForm, UserUpdateForm, BookingForm, HotelRegistrationForm, HotelLoginForm, ListingForm
+from .forms import UserRegistrationForm, UserUpdateForm,RoomForm, BookingForm,EditBookingForm, HotelRegistrationForm, HotelLoginForm, ListingForm
 from django.contrib import messages
-from .models import Booking, Hotel, Listing, Filter
+from .models import Booking, Hotel, Listing, Filter, Rooms
 from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.hashers import check_password
 import logging
+from django.utils import timezone
+
 
 # Set up logging
 logger = logging.getLogger(__name__)
@@ -50,19 +52,26 @@ def hotel_login_view(request):
 @login_required
 def home_view(request):
     search_query = request.GET.get('search', '')
-    listings = Listing.objects.all()  # Get all listings by default
+    listings = Listing.objects.all()  
+    filters = Filter.objects.all()
+
+    filter_query = request.GET.get('filter', '')
 
     if search_query:
-        # Filter listings by title or description
         listings = listings.filter(
             title__icontains=search_query
         ) | listings.filter(
             description__icontains=search_query
         )
 
+    if filter_query:
+        listings = listings.filter(filters__name=filter_query)  
+
+
     context = {
         'listings': listings,
         'search_query': search_query,
+        'filters': filters,
     }
     return render(request, 'home.html', context)
 
@@ -111,13 +120,19 @@ def update_profile_view(request):
     return render(request, 'update_profile.html', {'form': form})
 
 @login_required
-def booking_page(request):
+def booking_page(request,listing_id):
+    current_datetime = timezone.now()
+    rooms = Rooms.objects.filter(listing = listing_id)
+    for room in rooms:
+        print(room.name)
 
     listing = Listing.objects.all()
     return render(request, 'booking.html', {
         'username': request.user.username,
         'email': request.user.email,  
-        'listing':listing
+        'listing':listing,
+        'rooms':rooms,
+        "current_datetime":current_datetime,
     })
 
 @login_required
@@ -127,13 +142,16 @@ def logout_view(request):
 
 @login_required
 def book_now(request):
+   
     if request.method == 'POST':
         name = request.POST.get('name')
         email = request.POST.get('email')
         check_in = request.POST.get('check-in')
         check_out = request.POST.get('check-out')
         guests = request.POST.get('guests')
-        room_types = request.POST.getlist('room_type') 
+        room_id = request.POST.get('room_id') 
+        print("you book: ",room_id)
+        room = get_object_or_404(Rooms, pk=room_id)
 
         error_message = None
 
@@ -149,7 +167,7 @@ def book_now(request):
                 'check_in': check_in, 
                 'check_out': check_out,
                 'guests': guests, 
-                'room_types': room_types 
+                
             })
 
         booking = Booking(
@@ -159,7 +177,7 @@ def book_now(request):
             check_in=check_in,
             check_out=check_out,
             guests=guests,
-            room_types=', '.join(room_types) 
+            room=room,
         )
         booking.save() 
 
@@ -171,6 +189,12 @@ def book_now(request):
 def success(request):
     # Get the latest booking for the current user
     booking = Booking.objects.filter(user=request.user).latest('id')
+    
+    # Pass the booking details to the template
+    return render(request, 'success.html', {'booking': booking})
+
+def booking_details(request,booking_id):
+    booking = get_object_or_404(Booking, id=booking_id)
     
     # Pass the booking details to the template
     return render(request, 'success.html', {'booking': booking})
@@ -187,27 +211,30 @@ def my_bookings(request):
 def edit_booking(request, booking_id):
     # Retrieve the booking based on the ID
     booking = get_object_or_404(Booking, id=booking_id)
+    rooms = Rooms.objects.filter(listing = booking.room.listing)
+    
     
     if request.method == 'POST':
-        form = BookingForm(request.POST, instance=booking)
-        
+        form = EditBookingForm(request.POST, instance=booking)
+        getroom = request.POST.get('room') 
+        print('The room id is: ',getroom)
+        theRoom = get_object_or_404(Rooms, id=getroom)
         if form.is_valid():
-            # Save the form data back to the booking
             booking = form.save(commit=False)
-            # Join room types to store as a comma-separated string
-            booking.room_types = ','.join(form.cleaned_data['room_types'])
+            booking.room = theRoom
             booking.save()
             messages.success(request, 'Your booking has been updated successfully!')
             return redirect('my_bookings')  # Redirect to the bookings list page
     else:
         # Pre-fill room_types as a list for the form
-        initial_data = booking.room_types.split(',') if booking.room_types else []
-        form = BookingForm(instance=booking, initial={'room_types': initial_data})
+        
+        form = EditBookingForm(instance=booking)
 
     return render(request, 'edit_booking.html', {
         'form': form,
         'booking': booking,
-        'room_types': form.fields['room_types'].choices
+        "rooms":rooms,
+        
     })
 
 @login_required
@@ -235,19 +262,84 @@ def add_listing(request):
             listing = form.save(commit=False)
             listing.hotel_owner = request.user
             listing.save()
-            return redirect('hotel_dashboard')
+            form.save_m2m()
+            return redirect('add_room',listing_id = listing.id)
     else:
         form = ListingForm()
 
     return render(request, 'add_listing.html', {'form': form})
+@login_required
+def add_room_view(request,listing_id):
+    listing = get_object_or_404(Listing, id=listing_id)
+    if request.method == 'POST':
+        form = RoomForm(request.POST)
+        if form.is_valid():
+            room = form.save(commit=False)
+            room.listing = listing
+            room.save()
+            return redirect('hotel_dashboard')
+    else:
+        form = RoomForm()
 
+    return render(request, 'add_rooms.html', {'form': form})
+@login_required
+def viewBooks(request,listing_id):
+    bookings = Booking.objects.filter(room = listing_id)
+    
+    context = {'bookings':bookings,
+               }
+    return render(request, 'viewHotelBooks.html',context )
+@login_required
+def acceptBooking(request, booking_id):
+    booking = get_object_or_404(Booking, id=booking_id)
+
+    if request.method == 'POST' and 'accept_button' in request.POST:  
+        booking.status = 'Accepted'  
+        booking.save()  
+        messages.success(request, 'The booking has been accepted successfully!')
+        print('booking',booking.room.listing.id)
+        return redirect('viewBooks',listing_id =booking.room.listing.id)  
+    if request.method == 'POST' and 'cancel_button' in request.POST:  
+        booking.status = 'Canceled'  
+        booking.save()  
+        messages.success(request, 'The booking has been accepted successfully!')
+        print('successfully')
+        return redirect('viewBooks',listing_id =booking.room.listing.id)  
+    if request.method == 'POST' and 'check_in_button' in request.POST:  
+        booking.status = 'Check-in'  
+        booking.save()  
+        messages.success(request, 'The booking has been accepted successfully!')
+        print('successfully')
+        return redirect('viewBooks',listing_id =booking.room.listing.id)  
+
+    return render(request, 'viewHotelBooks.html', {'booking': booking})
+
+@login_required
 def listings_view(request):
     filter_value = request.GET.get('filter', '')
+    print("The filter value is:",filter_value)
     if filter_value:
         listings = Listing.objects.filter(filters__name=filter_value)  # Assuming you have a ManyToMany relationship
     else:
         listings = Listing.objects.all()
+   
     return render(request, 'home.html', {'listings': listings, 'search_query': request.GET.get('search', '')})
+
+#Just a try
+def filter_hotel_view(request,filter_value):
+    print("The filter value is:",filter_value)
+    filters = Filter.objects.all()
+    if filter_value:
+        listings = Listing.objects.filter(filters__name=filter_value)  # Assuming you have a ManyToMany relationship
+    else:
+        listings = Listing.objects.all()
+
+    context = {'listings': listings,
+               'filters':filters, 
+               'search_query': request.GET.get('search', ''),
+               'filter_value':filter_value,
+               }
+    return render(request, 'home.html',context )
 
 @login_required
 def update_listing(request, listing_id):

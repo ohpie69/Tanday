@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tanday - Hotel Dashboard</title>
+    <style>
+        /* Reset and base styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.5;
+            color: #333;
+            background-color: #f9f9f9; /* Light background for contrast */
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        /* Header styles */
+        header {
+            border-bottom: 1px solid #e5e5e5;
+            padding: 1rem 0;
+            background-color: white; /* White background for header */
+        }
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #8e24aa;
+            text-decoration: none;
+            transition: transform 0.3s ease;
+        }
+        .logo:hover {
+            transform: scale(1.05);
+        }
+        nav {
+            display: flex;
+            gap: 1rem;
+        }
+        nav a {
+            text-decoration: none;
+            color: #333;
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        nav a:hover, nav a.active {
+            background-color: #8e24aa;
+            color: white;
+        }
+
+        /* Main content styles */
+        main {
+            padding: 2rem 0;
+        }
+        .listings {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+        .listing-card {
+            border: 1px solid #e5e5e5;
+            border-radius: 0.5rem;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            background-color: white; /* White background for listing cards */
+        }
+        .listing-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .listing-image {
+            height: 200px;
+            overflow: hidden;
+        }
+        .listing-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+        .listing-card:hover .listing-image img {
+            transform: scale(1.05);
+        }
+        .listing-content {
+            padding: 1rem;
+        }
+        .listing-title {
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+        .listing-details {
+            color: #6b7280;
+            font-size: 0.875rem;
+        }
+        .listing-price {
+            margin-top: 0.5rem;
+            font-weight: bold;
+        }
+        .loading-spinner {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1001;
+            display: none;
+        }
+        .loading-spinner::after {
+            content: "";
+            width: 50px;
+            height: 50px;
+            border: 8px solid #f3f3f3;
+            border-top: 8px solid #8e24aa;
+            border-bottom: 8px solid #ffda5c;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Button styles */
+        .btn {
+            background: linear-gradient(90deg, #8e24aa, #6a1b9a);
+            color: white;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 9999px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-size: 10px;
+        }
+
+        .btn:hover {
+            background: linear-gradient(90deg, #6a1b9a, #8e24aa);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #e0e0e0;
+            color: #333;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 9999px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .btn-secondary:hover {
+            background: #bdbdbd;
+            transform: translateY(-2px);
+        }
+        .listings .list-info{
+            margin-bottom: 10px;
+
+        }
+        .button-container {
+            display: flex;
+            gap: 10px; /* Adds space between the buttons */
+        }
+
+        .cancel-button, .accept-button, .Check-in {
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .cancel-button {
+            background-color: #f44336; /* Red background */
+            color: white;
+        }
+
+        .cancel-button:hover {
+         background-color: #d32f2f; /* Darker red */
+        }
+
+        .accept-button {
+            background-color: #4CAF50; /* Green background */
+            color: white;
+        }
+
+        .accept-button:hover {
+            background-color: #388E3C; /* Darker green */
+        }
+        .Check-in{
+            background-color: #e4d555;
+        }
+       
+
+    </style>
+</head>
+<body>
+    {% load static %}
+    <header>
+        <div class="container header-content">
+            <div class="balay">
+                <a href="/home" class="logo"><img src="{% static 'logo.png' %}" alt="Tanday Logo" style="width: 40px; height: 40px; border-radius: 50%; margin-left: 20px;">Tanday</a>
+            </div>
+            <nav>
+                <a href="{% url 'hotel_dashboard' %}" class="active">Dashboard</a>
+                <a href="{% url 'add_listing' %}">Add Listing</a>
+                <a href="{% url 'logout'%}">Log Out</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <h1>Your Listings</h1>
+        <div class="listings">
+            {% for booking in bookings %}
+                <div class="list-info">
+                    {%if booking.status !=  'Check-out' %}
+                        <p>Book by: {{booking.name}}</p>
+                        <p>Email: {{booking.email}}</p>
+                        <p>Check In: {{booking.check_in}}</p>
+                        <p>Check Out: {{booking.check_out}}</p>
+                        <p>Number Guest: {{booking.guests}}</p>
+                        <p>Room name: {{booking.room.name}}</p>
+                        <p>Status: {{booking.status}}</p>
+                        <p>Booking Number: {{booking.booking_number}}</p>
+                        <form method="POST" action="{% url 'accept' booking.id %}">
+                            {% csrf_token %}
+                            <button type="submit" name="accept_button" class="accept-button">Accept</button>
+                            <button type="submit" name="check_in_button" class="Check-in">Check-in</button>
+                            <button type="submit" name="cancel_button" class="cancel-button">Cancel</button>
+                            
+                        </form>
+                    {%endif%}
+                </div>
+            {% empty %}
+                <p>No listings available.</p>
+            {% endfor %}
+        </div>
+    </main>
+
+    <div id="spinner" class="loading-spinner"></div>
+
+    <script>
+        // Loading spinner functionality
+       
+        function addRoom(event, url) {
+            // Don't redirect if clicking on dropdown or its children
+            if (!event.target.closest('.dropdown')) {
+                window.location.href = url;
+            }
+        }
+    </script>
+</body>
+</html>

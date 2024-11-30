@@ -111,11 +111,182 @@
         .back-link:hover {
             text-decoration: underline;
         }
+        header {
+            border-bottom: 1px solid #e5e5e5;
+            padding: 1rem 0;
+            background-color: #fff;
+        }
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .search-user {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .search-bar {
+            display: flex;
+            align-items: center;
+            border: 1px solid #e5e5e5;
+            border-radius: 9999px;
+            padding: 0.5rem 1rem;
+            transition: box-shadow 0.3s ease;
+        }
+        .search-bar:hover {
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .search-bar input {
+            border: none;
+            outline: none;
+            font-size: 1rem;
+            width: 200px;
+        }
+        .search-bar button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.25rem;
+            color: #8e24aa;
+        }
+
+        .user-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .user-actions button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.25rem;
+            transition: transform 0.3s ease;
+        }
+        .user-actions button:hover {
+            transform: scale(1.1);
+        }
+
+        .dashboard-dropdown {
+            position: relative;
+        }
+        .dashboard-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background-color: white;
+            border: 1px solid #e5e5e5;
+            border-radius: 0.5rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            display: none;
+            z-index: 1000;
+        }
+        .dashboard-dropdown:hover .dashboard-menu {
+            display: block;
+        }
+        .dashboard-menu a {
+            display: block;
+            padding: 0.5rem 1rem;
+            text-decoration: none;
+            color: #333;
+            transition: background-color 0.3s ease;
+        }
+        .dashboard-menu a:hover {
+            background-color: #f5f5f5;
+        }
+
+        nav {
+            display: flex;
+            gap: 1.5rem;
+        }
+        nav a {
+            text-decoration: none;
+            color: #333;
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        nav a:hover, nav a.active {
+            background-color: #8e24aa;
+            color: white;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #8e24aa;
+            text-decoration: none;
+            transition: transform 0.3s ease;
+        }
+        .logo img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        .logo:hover {
+            transform: scale(1.05);
+        }
     </style>
 </head>
 <body>
     {% load static %}
+
+    
+
     <div class="container">
+        <header>
+            <div class="container header-content">
+                <div class="balay">
+                    <a href="/home/" class="logo" ><img src="{% static 'logo.png' %}" alt="Tanday Logo" style="width: 40px; height: 40px; border-radius: 50%; margin-left: 20px;">Tanday</a>                
+              </div>        
+                <nav>
+                    <a href="{% url 'home' %}" >Tanday</a>
+                    <a href="{% url 'my_bookings' %}" class="active">Tanday karon</a>
+                    <a href="#" class="loading-link">Tanday Unya</a>
+                </nav>
+                <div class="search-user">
+                    <div class="search-bar">
+                        <form method="GET" action="{% url 'home' %}">
+                            <input type="text" name="search" placeholder="Search destinations" value="{{ search_query }}">
+                            <button type="submit" aria-label="Search">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="11" cy="11" r="8"></circle>
+                                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                                </svg>
+                            </button>
+                        </form>
+                    </div>
+                    <div class="user-actions">
+                        <span>{{ request.user.username }}</span>
+                        <button aria-label="User profile">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="12" cy="7" r="4"></circle>
+                            </svg>
+                        </button>
+                        <div class="dashboard-dropdown">
+                            <button aria-label="Dashboard">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="3" width="7" height="7"></rect>
+                                    <rect x="14" y="3" width="7" height="7"></rect>
+                                    <rect x="14" y="14" width="7" height="7"></rect>
+                                    <rect x="3" y="14" width="7" height="7"></rect>
+                                </svg>
+                            </button>
+                            <div class="dashboard-menu">
+                                <a href="{% url 'edit_user'%}">Edit Account</a>
+                                <a href="{% url 'my_bookings' %}">See Bookings</a>
+                                <a href="{% url 'logout'%}">Log Out</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
         <h1>Your Bookings</h1>
         <table>
             <thead>
@@ -126,7 +297,8 @@
                     <th>Check-in</th>
                     <th>Check-out</th>
                     <th>Guests</th>
-                    <th>Room Types</th>
+                    <th>Room Name</th>
+                    <th>Status</th>
                     <th>Edit / Delete</th>
                 </tr>
             </thead>
@@ -139,18 +311,22 @@
                         <td>{{ booking.check_in }}</td>
                         <td>{{ booking.check_out }}</td>
                         <td>{{ booking.guests }}</td>
-                        <td>{{ booking.room_types }}</td>
-                        <td>
+                        <td>{{ booking.room.name }}</td>
+                        <td>{{ booking.status }}</td>
+                       
+                        <td style="display: flex;flex-direction: row; justify-content: space-between;">
                             <a href="{% url 'edit_booking' booking.id %}" class="action-link">Edit</a>
                             <a href="#" class="action-link" onclick="confirmDelete({{ booking.id }})">Delete</a>
+                            <a href="#" class="action-link" onclick="viewDetails(event, '{% url 'booking_details' booking.id %}')"">View Details</a>
                         </td>
+                       
                     </tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
     <div class="button-container">
-        <a href="{% url 'booking' %}" class="button">Add Booking</a>
+        <a href="{% url 'home' %}" class="button">Add Booking</a>
         <button class="button" id="editBookingsButton">Edit Bookings</button>
     </div>
 
@@ -184,7 +360,7 @@
                 <input type="number" id="guests" name="guests" min="1" required>
             </div>
             <div class="form-group">
-                <label>Room Types:</label>
+                <label>Room Name:</label>
                 <div class="room-types">
                     <div class="room-type-option">
                         <input type="checkbox" id="gaming-room" name="room_types" value="gaming-room">
@@ -342,6 +518,13 @@
                 });
             });
         });
+
+        function viewDetails(event, url) {
+            // Don't redirect if clicking on dropdown or its children
+            if (!event.target.closest('.dropdown')) {
+                window.location.href = url;
+            }
+        }
     </script>
 </body>
 </html>

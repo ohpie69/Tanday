@@ -193,7 +193,7 @@
             border-radius: 0.5rem;
             overflow: hidden;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
-            max-width: 350px; /* Optional: Set a max width for cards */
+            width: 350px; /* Optional: Set a max width for cards */
             margin: left;
         }
         .listing-card:hover {
@@ -212,6 +212,7 @@
         }
         .listing-card:hover .listing-image img {
             transform: scale(1.05);
+            
         }
         .listing-content {
             padding: 1rem;
@@ -266,6 +267,13 @@
         a:hover {
             color: #333;
         }
+        #listings-container{
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            flex-direction: row;
+            flex-wrap: wrap;
+        }
     </style>
 </head>
 <body>
@@ -277,7 +285,7 @@
           </div>        
             <nav>
                 <a class="active">Tanday</a>
-                <a href="{% url 'booking' %}" class="loading-link">Tanday Karon</a>
+                <a href="{% url 'my_bookings' %}" class="loading-link">Tanday karon</a>
                 <a href="#" class="loading-link">Tanday Unya</a>
             </nav>
             <div class="search-user">
@@ -322,22 +330,21 @@
 
     <main class="container">
         <div class="filters" style="margin-top: 20px;">
-            <button class="filter-button active" data-filter="">All</button>
-            <button class="filter-button" data-filter="Rooms">Rooms</button>
-            <button class="filter-button" data-filter="Amazing views">Amazing views</button>
-            <button class="filter-button" data-filter="Tiny homes">Tiny homes</button>
-            <button class="filter-button" data-filter="Cabins">Cabins</button>
-            <button class="filter-button" data-filter="Tropical">Tropical</button>
-            <button class="filter-button" data-filter="Amazing pools">Amazing pools</button>
-            <button class="filter-button" data-filter="Beachfront">Beachfront</button>
-            <button class="filter-button" data-filter="Countryside">Countryside</button>
-            <button class="filter-button" data-filter="Skiing">Skiing</button>
-            <button class="filter-button" data-filter="Bed & breakfasts">Bed & breakfasts</button>
+            <div class="filter-button {% if filter_value == filter.name %} active {% endif %} " 
+                onclick="filterHotel(event, '{% url 'home'%}')">
+                   All
+            </div>
+            {% for filter in filters %}
+                <div class="filter-button {% if filter_value == filter.name %} active {% endif %}" 
+                        onclick="filterHotel(event, '{% url 'filter_hotel' filter.name %}')">
+                    {{ filter.name }}
+                </div>
+            {% endfor %}
         </div>
 
         <div id="listings-container">
             {% for listing in listings %}
-                <a href="{% url 'booking'%}">
+                <a href="{% url 'booking' listing.id %}">
                     <div class="listing-card">
                         <div class="listing-image">
                             <img src="{{ listing.image.url }}" alt="{{ listing.title }}" loading="lazy">
@@ -345,10 +352,11 @@
                         <div class="listing-content">
                             <h3 class="listing-title">{{ listing.title }}</h3>
                             <p class="listing-details">{{ listing.description }}</p>
-                            <p class="listing-price">₱{{ listing.price_per_night }} night</p>
+                            <p class="listing-price">₱{{ listing.price_per_night }} Night</p>
                         </div>
                     </div>
                 </a>
+               
             {% empty %}
                 <h1>No one us here but us chickens.</h1>
             {% endfor %}
@@ -372,32 +380,33 @@
                 });
             });
 
-            function displayFilteredListings(filter) {
-                fetch(`/listings?filter=${filter}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        listingsContainer.innerHTML = ''; // Clear previous listings
-                        if (data.length > 0) {
-                            data.forEach(listing => {
-                                listingsContainer.innerHTML += `
-                                    <div class="listing-card">
-                                        <div class="listing-image">
-                                            <img src="${listing.image}" alt="${listing.title}" loading="lazy">
-                                        </div>
-                                        <div class="listing-content">
-                                            <h3 class="listing-title">${listing.title}</h3>
-                                            <p class="listing-details">${listing.description}</p>
-                                            <p class="listing-price">₱${listing.price_per_night} night</p>
-                                        </div>
-                                    </div>
-                                `;
-                            });
-                        } else {
-                            listingsContainer.innerHTML = '<p>No listings available for this filter.</p>';
-                        }
-                    });
-            }
+            // function displayFilteredListings(filter) {
+            //     const spinner = document.getElementById('spinner');
+            //     spinner.style.display = 'flex'; // Show the spinner
+
+            //     fetch(`/listings?filter=${filter}`)
+            //         .then(response => response.json())
+            //         .then(data => {
+            //             spinner.style.display = 'none'; // Hide the spinner
+            //             listingsContainer.innerHTML = ''; // Clear previous listings
+            //             // Dynamically build listings here
+            //         })
+            //         .catch(error => {
+            //             spinner.style.display = 'none';
+            //             console.error('Error fetching listings:', error);
+            //         });
+            // }
+
+         
+
         });
+        function filterHotel(event, url) {
+            // Don't redirect if clicking on dropdown or its children
+            if (!event.target.closest('.dropdown')) {
+                window.location.href = url;
+            }
+        }
+
     </script>
     
 </body>

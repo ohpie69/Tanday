@@ -260,7 +260,7 @@
             <div class="form-group date-inputs">
                 <div>
                     <label for="check-in">Check-in Date</label>
-                    <input type="date" id="check-in" name="check-in" required>
+                    <input type="date" id="check-in" name="check-in" min="{{ current_datetime|date:'Y-m-d\TH:i' }}" required >
                 </div>
                 <div>
                     <label for="check-out">Check-out Date</label>
@@ -275,16 +275,14 @@
 
             <div class="form-group">
                 <label>Room Types (Select all that apply)</label>
-                {% for listings in listing %}
+                
+                {% for room in rooms %}
                 <div class="room-types">
                     <label class="room-type-item">
-                        <input type="checkbox" name="room_type" value="{{ listings.title }}">
+                        <input type="radio" name="room_id" value="{{ room.id }}">
                         <div style="display: flex; flex-direction: column;">
                             <span>
-                                {{ listings.title }}
-                            </span>
-                            <span>
-                                <img src="{{ listings.image.url }}" alt="{{ listing.title }}" loading="lazy" width="200px" height="100px">
+                                {{ room.name }}  ₱{{ room.price }}
                             </span>
                         </div>
                     </label>

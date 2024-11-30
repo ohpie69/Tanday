@@ -73,32 +73,38 @@
             color: #374151;
         }
 
+       
         input[type="text"],
         input[type="email"],
         input[type="date"],
-        input[type="number"] {
+        input[type="number"],
+        select {
             width: 100%;
             padding: 0.75rem;
-            border: 1px solid #d1d5db;
-            border-radius: 0.375rem;
-            font-size: 1rem;
-            transition: border-color 0.15s ease-in-out;
+            border: 1px solid #d1d5db;  
+            border-radius: 0.375rem;    
+            font-size: 1rem;            
+            transition: border-color 0.15s ease-in-out;  
         }
 
+       
         input[type="text"]:hover,
         input[type="email"]:hover,
         input[type="date"]:hover,
-        input[type="number"]:hover {
-            border-color: var(--purple-400);
+        input[type="number"]:hover,
+        select:hover {  
+            border-color: var(--purple-400);  
         }
 
+        
         input[type="text"]:focus,
         input[type="email"]:focus,
         input[type="date"]:focus,
-        input[type="number"]:focus {
-            outline: none;
-            border-color: var(--purple-500);
-            box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.45);
+        input[type="number"]:focus,
+        select:focus {
+            outline: none; 
+            border-color: var(--purple-500);  
+            box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.45);  
         }
 
         .date-inputs {
@@ -187,6 +193,15 @@
         <form method="POST" action="{% url 'edit_booking' booking.id %}">
             {% csrf_token %}
             {{ form.as_p }}
+            <label for="Rooms">Select Rooms:</label>
+            <select name="room" id="room" class="form-select" style="width: 100%; padding: 10px; border-radius: 5px; font-size: 16px; border: 1px solid #ccc; background-color: #f9f9f9;">
+                {% for room in rooms %}
+                    <option value="{{ room.id }}" style="padding: 10px; font-size: 14px;">
+                        {{ room.name }}
+                    </option>
+                {% endfor %}
+            </select>
+
             <div class="button-group">
                 <button type="submit" class="button button-primary">Update Booking</button>
                 <a href="{% url 'my_bookings' %}" class="button button-secondary">Back to My Bookings</a>

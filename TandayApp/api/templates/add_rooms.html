@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Listing - Tanday</title>
+    <style>
+        /* Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f7f7f7;
+            color: #333;
+        }
+        .container {
+            max-width: 600px;
+            margin: 2rem auto;
+            padding: 1rem;
+        }
+
+        /* Header */
+        header {
+            background-color: #fff;
+            padding: 1rem 0;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #8e24aa;
+        }
+        .logo img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 0.5rem;
+        }
+        nav {
+            display: flex;
+            gap: 1rem;
+        }
+        nav a {
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
+            color: #555;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        nav a:hover, nav a.active {
+            background-color: #8e24aa;
+            color: #fff;
+        }
+
+        /* Form Styles */
+        .form-container {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 2rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+        .form-container h1 {
+            font-size: 1.8rem;
+            color: #333;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        label {
+            font-size: 0.9rem;
+            color: #555;
+            margin-bottom: 0.5rem;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+        input:focus, textarea:focus {
+            border-color: #8e24aa;
+            outline: none;
+            box-shadow: 0 0 5px rgba(142, 36, 170, 0.5);
+        }
+        .form-actions {
+            display: flex;
+            justify-content: space-between;
+        }
+        .btn {
+            padding: 0.8rem 1.5rem;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        .btn-primary {
+            background-color: #8e24aa;
+            color: #fff;
+            transition: background-color 0.3s;
+        }
+        .btn-primary:hover {
+            background-color: #6a1b9a;
+        }
+        .btn-secondary {
+            background-color: #e0e0e0;
+            color: #555;
+            transition: background-color 0.3s;
+        }
+        .btn-secondary:hover {
+            background-color: #bdbdbd;
+        }
+    </style>
+</head>
+<body>
+    {% load static %}
+    <header>
+        <div class="header-content">
+            <a href="/home" class="logo">
+                <img src="{% static 'logo.png' %}" alt="Tanday Logo">
+                Tanday
+            </a>
+            <nav>
+                <a href="{% url 'hotel_dashboard' %}" class="active">Dashboard</a>
+                <a href="{% url 'add_listing' %}">Add Listing</a>
+                <!-- <a href="{% url 'my_bookings' %}">My Bookings</a> -->
+                <a href="{%url 'logout'%}">Log Out</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="form-container">
+            <h1>Add Room</h1>
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                    <a href="{% url 'hotel_dashboard' %}" class="btn btn-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
