@@ -246,9 +246,11 @@
                         <p>Booking Number: {{booking.booking_number}}</p>
                         <form method="POST" action="{% url 'accept' booking.id %}">
                             {% csrf_token %}
+                           {%if booking.status != 'Canceled' and booking.status != 'Check-in'%}
                             <button type="submit" name="accept_button" class="accept-button">Accept</button>
                             <button type="submit" name="check_in_button" class="Check-in">Check-in</button>
                             <button type="submit" name="cancel_button" class="cancel-button">Cancel</button>
+                           {%endif%}
                             
                         </form>
                     {%endif%}

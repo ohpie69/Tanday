@@ -85,8 +85,20 @@
 </head>
 <body>
     <div class="container">
-        <h1>Thank you! Your booking has been received.</h1>
-
+        <h1>Thank you
+            {%if booking.status == 'Check-out'%}
+                ! Come Again!!
+            {%endif%}
+            {%if booking.status == 'Check-in'%}
+                ! Enjoy your stay
+            {%endif%}
+            {%if booking.status == 'Pending'%}
+                , for your patience
+            {%endif%}
+            {%if booking.status == 'Accepted'%}
+                ! We are excited to serve you
+            {%endif%}
+        </h1>
         <!-- Booking details -->
         <div class="details">
             <p><strong>Booking Number:</strong> {{ booking.booking_number }}</p>

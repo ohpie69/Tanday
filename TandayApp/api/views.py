@@ -8,6 +8,7 @@ from .models import Booking, Hotel, Listing, Filter, Rooms
 from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.hashers import check_password
 import logging
+from django.db import models
 from django.utils import timezone
 
 
@@ -250,7 +251,7 @@ def delete_booking(request, booking_id):
 @login_required
 def hotel_dashboard(request):
     # Get the listings for the logged-in hotel owner
-    listings = Listing.objects.all()
+    listings = Listing.objects.filter(hotel_owner = request.user)
     if request.user.is_staff:
         return render(request, 'hotel_dashboard.html', {'listings': listings})
 
@@ -284,7 +285,7 @@ def add_room_view(request,listing_id):
     return render(request, 'add_rooms.html', {'form': form})
 @login_required
 def viewBooks(request,listing_id):
-    bookings = Booking.objects.filter(room = listing_id)
+    bookings = Booking.objects.filter(room__listing__id=listing_id)
     
     context = {'bookings':bookings,
                }
@@ -311,6 +312,25 @@ def acceptBooking(request, booking_id):
         messages.success(request, 'The booking has been accepted successfully!')
         print('successfully')
         return redirect('viewBooks',listing_id =booking.room.listing.id)  
+    
+    if request.method == 'POST' and 'Check-In_button' in request.POST:  
+        booking.status = 'Check-in'  
+        booking.save()  
+        messages.success(request, 'The booking has been accepted successfully!')
+        print('successfully')
+        return redirect('my_bookings')  
+    if request.method == 'POST' and 'cancel-user_button' in request.POST:  
+        booking.status = 'Canceled'  
+        booking.save()  
+        messages.success(request, 'The booking has been accepted successfully!')
+        print('successfully')
+        return redirect('my_bookings') 
+    if request.method == 'POST' and 'check-out-user_button' in request.POST:  
+        booking.status = 'Check-out'  
+        booking.save()  
+        messages.success(request, 'The booking has been accepted successfully!')
+        print('successfully')
+        return redirect('my_bookings') 
 
     return render(request, 'viewHotelBooks.html', {'booking': booking})
 

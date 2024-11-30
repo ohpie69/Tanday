@@ -194,24 +194,27 @@
         <h1>Your Listings</h1>
         <div class="listings">
             {% for listing in listings %}
-                <div class="listing-card" onclick="hotelBooks(event, '{% url 'viewBooks' listing.id %}')">
-                    <div class="listing-image" >
-                        <img src="{{ listing.image.url }}" alt="{{ listing.title }}" loading="lazy">
+
+                    <div class="listing-card" onclick="hotelBooks(event, '{% url 'viewBooks' listing.id %}')">
+                        <div class="listing-image" >
+                            <img src="{{ listing.image.url }}" alt="{{ listing.title }}" loading="lazy">
+                        </div>
+                        <div class="listing-content">
+                            <h3 class="listing-title">{{ listing.title }}</h3>
+                            <p class="listing-details">{{ listing.description }}</p>
+                            <p class="listing-price">₱{{ listing.price_per_night }} night</p>
+                            <a href="{% url 'update_listing' listing.id %}" class="btn">Edit</a>
+                            <a href="{% url 'add_room' listing.id %}" class="btn">Add Room</a>
+                            <form action="{% url 'delete_listing' listing.id %}" method="POST" style="display:inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-secondary" onclick="return confirm('Are you sure you want to delete this listing?');">Delete</button>
+                            </form>
+                        </div>
                     </div>
-                    <div class="listing-content">
-                        <h3 class="listing-title">{{ listing.title }}</h3>
-                        <p class="listing-details">{{ listing.description }}</p>
-                        <p class="listing-price">₱{{ listing.price_per_night }} night</p>
-                        <a href="{% url 'update_listing' listing.id %}" class="btn">Edit</a>
-                        <a href="{% url 'add_room' listing.id %}" class="btn">Add Room</a>
-                        <form action="{% url 'delete_listing' listing.id %}" method="POST" style="display:inline;">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-secondary" onclick="return confirm('Are you sure you want to delete this listing?');">Delete</button>
-                        </form>
-                    </div>
-                </div>
+              
             {% empty %}
                 <p>No listings available.</p>
+          
             {% endfor %}
         </div>
     </main>
