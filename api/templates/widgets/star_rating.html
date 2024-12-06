@@ -1,0 +1,39 @@
+<style>
+    .star-rating {
+    display: flex;
+    direction: row-reverse;
+    justify-content: center;
+}
+
+.star-rating input {
+    display: none;
+}
+
+.star-rating label {
+    font-size: 2rem;
+    color: lightgray;
+    cursor: pointer;
+}
+
+.star-rating input:checked ~ label,
+.star-rating label:hover,
+.star-rating label:hover ~ label {
+    color: gold;
+}
+
+</style>
+
+<div class="star-rating">
+    {% for group in widget.optgroups %}
+        {% for option in group.options %}
+            <input 
+                type="radio" 
+                id="{{ option.id_for_label }}" 
+                name="{{ widget.name }}" 
+                value="{{ option.value }}" 
+                {% if option.value == widget.value|stringformat:"s" %} checked {% endif %}
+            />
+            <label for="{{ option.id_for_label }}" class="star">★</label>
+        {% endfor %}
+    {% endfor %}
+</div>

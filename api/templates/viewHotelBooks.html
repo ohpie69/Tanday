@@ -1,0 +1,173 @@
+{% extends 'hotel_base.html' %}
+{% load static %}
+
+{% load static %}
+
+{% block title %}Tanday - Home Sharing Platform{% endblock %}
+
+{% block extra_css %}
+<style>
+     /* Reset and base styles */
+    
+     .container {
+         max-width: 1200px;
+         margin: 0 auto;
+         padding: 0 1rem;
+     }
+
+    
+
+     main {
+         padding: 2rem 0;
+     }
+     h1 {
+         font-size: 2rem;
+         color: #333;
+         margin-bottom: 1.5rem;
+     }
+     .listings {
+         display: flex;
+         flex-direction: column;
+         gap: 1.5rem;
+     }
+     .list-info {
+         background-color: #ffffff;
+         border-radius: 8px;
+         box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+         padding: 1.5rem;
+     }
+     .booking-header {
+         display: flex;
+         justify-content: space-between;
+         align-items: center;
+         margin-bottom: 1rem;
+     }
+     .booking-header h2 {
+         font-size: 1.25rem;
+         color: #333;
+     }
+     .booking-status {
+         font-weight: bold;
+         color: #8e24aa;
+     }
+     .info-grid {
+         display: grid;
+         grid-template-columns: repeat(2, 1fr); /* Creates two equal-width columns */
+         gap: 10px; /* Adds space between items */
+         align-items: start; /* Aligns items at the top */
+     }
+
+     .info-item {
+         font-size: 14px; /* Adjust font size as needed */
+         line-height: 1.5;
+     }
+     .info-item::before {
+         content: '';
+         display: inline-block;
+         width: 20px;
+         height: 20px;
+         margin-right: 0.5rem;
+         background-size: contain;
+         background-repeat: no-repeat;
+     }
+     .info-item.email::before {
+         background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%238e24aa'%3E%3Cpath d='M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z'/%3E%3C/svg%3E");
+     }
+     .info-item.guests::before {
+         background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%238e24aa'%3E%3Cpath d='M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z'/%3E%3C/svg%3E");
+     }
+     .info-item.check-in::before, .info-item.check-out::before {
+         background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%238e24aa'%3E%3Cpath d='M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z'/%3E%3C/svg%3E");
+     }
+     .info-item.room::before {
+         background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%238e24aa'%3E%3Cpath d='M7 13c1.66 0 3-1.34 3-3S8.66 7 7 7s-3 1.34-3 3 1.34 3 3 3zm12-6h-8v7H3V5H1v15h2v-3h18v3h2v-9c0-2.21-1.79-4-4-4z'/%3E%3C/svg%3E");
+     }
+     .info-item.booking-number::before {
+         background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%238e24aa'%3E%3Cpath d='M3 5v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2zm12 4c0 1.66-1.34 3-3 3s-3-1.34-3-3 1.34-3 3-3 3 1.34 3 3zm-9 8c0-2 4-3.1 6-3.1s6 1.1 6 3.1v1H6v-1z'/%3E%3C/svg%3E");
+     }
+     .button-container {
+         display: flex;
+         gap: 10px;
+     }
+     .btn {
+         padding: 0.5rem 1rem;
+         border: none;
+         border-radius: 5px;
+         cursor: pointer;
+         font-weight: bold;
+         text-transform: uppercase;
+         transition: background-color 0.3s ease, transform 0.2s ease;
+     }
+     .btn-accept {
+         background-color: #4CAF50;
+         color: white;
+     }
+     .btn-accept:hover {
+         background-color: #45a049;
+     }
+     .btn-check-in {
+         background-color: #2196F3;
+         color: white;
+     }
+     .btn-check-in:hover {
+         background-color: #1e88e5;
+     }
+     .btn-cancel {
+         background-color: #f44336;
+         color: white;
+     }
+     .btn-cancel:hover {
+         background-color: #e53935;
+     }
+ </style>
+ {% endblock extra_css %}
+
+
+{% block content %}
+    <main class="container">
+        <h1>Your Listings</h1>
+        <div class="listings">
+            {% for booking in bookings %}
+                {% if booking.status != 'Check-out' %}
+                <div class="list-info">
+                    <div class="booking-header">
+                        <h2>Booking by {{booking.name}}</h2>
+                        <span class="badge 
+                            {% if booking.status == 'Pending' %} bg-warning
+                            {% elif booking.status == 'Canceled' %} bg-danger
+                            {% elif booking.status == 'Accepted' %} bg-success
+                            {% elif booking.status == 'Check-in' %} bg-purple
+                            {% elif booking.status == 'Check-out' %} bg-black
+                            {% else %} bg-black
+                            {% endif %}
+                            text-white rounded-pill"> 
+                            {{ booking.status }}
+                        </span>
+                    </div>
+                    <div class="info-grid">
+                        <span class="info-item email">Email: {{booking.email}}</span>
+                        <span class="info-item guests">Number of Guests: {{booking.guests}}</span>
+                        <span class="info-item check-in">Check In: {{booking.check_in}}</span>
+                        <span class="info-item check-out">Check Out: {{booking.check_out}}</span>
+                        <span class="info-item room">Room Name: {{booking.room.name}}</span>
+                        <span class="info-item booking-number">Booking Number: {{booking.booking_number}}</span>
+                    </div>
+                    
+                    <form method="POST" action="{% url 'accept' booking.id %}">
+                        {% csrf_token %}
+                        {% if booking.status != 'Canceled' and booking.status != 'Check-in' %}
+                        <div class="button-container">
+                            <button type="submit" name="accept_button" class="btn btn-accept">Accept</button>
+                            <button type="submit" name="check_in_button" class="btn btn-check-in">Check-in</button>
+                            <button type="submit" name="cancel_button" class="btn btn-cancel">Cancel</button>
+                        </div>
+                        {% endif %}
+                    </form>
+                </div>
+                {% endif %}
+            {% empty %}
+                <p>No listings available.</p>
+            {% endfor %}
+        </div>
+    </main>
+    {% endblock %}

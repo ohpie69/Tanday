@@ -1,0 +1,222 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Tanday - Book Your Stay{% endblock %}
+
+{% block content %}
+<div class="container-fluid container-xxl py-4">
+    <div class="row justify-content-center">
+        <div class="col-12 col-lg-8">
+            <!-- Booking Card -->
+            <div class="card shadow-sm rounded-4 border-0">
+                <div class="card-body p-4">
+                    <h2 class="text-center text-secondary mb-4">Book Your Stay</h2>
+                    
+                    <!-- Booking Form -->
+                    <form class="booking-form" method="POST" action="{% url 'book_now' %}">
+                        {% csrf_token %}
+                        
+                        <!-- Personal Details -->
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <label class="form-label">First Name</label>
+                                <input type="text" name="first_name" class="form-control rounded-3" required value="{{ request.user.first_name }}">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Last Name</label>
+                                <input type="text" name="last_name" class="form-control rounded-3" required value="{{ request.user.last_name }}">
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label">Email</label>
+                                <input type="email" name="email" class="form-control rounded-3" required value="{{ email }}">
+                            </div>
+                        </div>
+
+                        <!-- Dates -->
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <label class="form-label">Check-in Date</label>
+                                <input 
+                                    type="date" 
+                                    name="check_in" 
+                                    class="form-control rounded-3" 
+                                    id="check_in" 
+                                    required 
+                                    min="{{ current_datetime|date:'Y-m-d' }}">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Check-out Date</label>
+                                <input 
+                                    type="date" 
+                                    name="check_out" 
+                                    class="form-control rounded-3" 
+                                    id="check_out" 
+                                    required>
+                            </div>
+                        </div>
+
+                        <!-- Room Types -->
+                        <div class="mb-4">
+                            <label class="form-label">Room Type</label>
+                            <div class="row g-3">
+                                {% for room in rooms %}
+                                <div class="col-md-6">
+                                    <div class="form-check">
+                                        <input type="radio" 
+                                               name="room_id" 
+                                               value="{{ room.id }}" 
+                                               class="form-check-input" 
+                                               id="room_{{ room.id }}"
+                                               {% if room.available_room <= 0 %} disabled {% endif %}
+                                               required>
+                                        <label class="form-check-label d-flex justify-content-between align-items-center p-3 border rounded-3" 
+                                               for="room_{{ room.id }}">
+                                            <span>{{ room.name }}</span>
+                                            <span class="badge bg-purple">₱ {{ room.price|floatformat:2 }}/night</span>
+                                        </label>
+                                        <span style="margin-left: 20px;">{% if room.available_room <= 0 %} Unavailable {% else %} 
+                                            Available: {{ room.available_room }}{% endif %}</span>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <!-- Number of Guests -->
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <label class="form-label">Adults</label>
+                                <input type="number" 
+                                       name="adults" 
+                                       min="1" 
+                                       value="1" 
+                                       class="form-control rounded-3" 
+                                       required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Children</label>
+                                <input type="number" 
+                                       name="children" 
+                                       min="0" 
+                                       value="0" 
+                                       class="form-control rounded-3">
+                            </div>
+                        </div>
+
+                        <!-- Special Requests -->
+                        <div class="mb-4">
+                            <label class="form-label">Special Requests</label>
+                            <textarea name="special_requests" 
+                                      class="form-control rounded-3" 
+                                      rows="3"
+                                      placeholder="Any special requests or preferences?"></textarea>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-purple btn-lg rounded-pill px-5">
+                                Book Now
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Reviews Section -->
+            {% if reviews %}
+            <div class="card shadow-sm rounded-4 border-0 mt-4">
+                <div class="card-body p-4">
+                    <h3 class="card-title mb-4">Guest Reviews</h3>
+                    <div class="reviews-list">
+                        {% for review in reviews %}
+                        <div class="review-item border-bottom pb-3 mb-3">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <div>
+                                    <h6 class="mb-1">{{ review.user.username }}</h6>
+                                    <div class="text-muted small">{{ review.timePosted|date:"F j, Y" }}</div>
+                                    <div class="text-muted small">Booked: {{ review.booking.room.name }}</div>
+                                </div>
+                                <div class="text-purple">
+                                    {% for i in "12345" %}
+                                    <i class="fas fa-star {% if forloop.counter <= review.rating %}text-purple{% else %}text-muted{% endif %}"></i>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <p class="mb-0 text-secondary">{{ review.message }}</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const checkInInput = document.getElementById("check_in");
+        const checkOutInput = document.getElementById("check_out");
+
+        checkInInput.addEventListener("change", function () {
+            // Get the selected check-in date
+            const checkInDate = this.value;
+
+            // Set the minimum value for the check-out date
+            checkOutInput.min = checkInDate;
+
+            // If the current check-out value is earlier than the check-in date, reset it
+            if (checkOutInput.value < checkInDate) {
+                checkOutInput.value = "";
+            }
+        });
+    });
+</script>
+{% endblock %}
+
+{% block styles %}
+<style>
+    .btn-purple {
+        background-color: #8e24aa;
+        color: white;
+    }
+    
+    .btn-purple:hover {
+        background-color: #7b1fa2;
+        color: white;
+    }
+    
+    .text-purple {
+        color: #8e24aa !important;
+    }
+    
+    .bg-purple {
+        background-color: #8e24aa !important;
+    }
+    
+    .form-check-input:checked {
+        background-color: #8e24aa;
+        border-color: #8e24aa;
+    }
+    
+    .form-check-label {
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    
+    .form-check-label:hover {
+        border-color: #8e24aa !important;
+        background-color: rgba(142, 36, 170, 0.1);
+    }
+    
+    .form-check-input:checked + .form-check-label {
+        border-color: #8e24aa !important;
+        background-color: rgba(142, 36, 170, 0.1);
+    }
+    
+    .form-control:focus {
+        border-color: #8e24aa;
+        box-shadow: 0 0 0 0.25rem rgba(142, 36, 170, 0.25);
+    }
+</style>
+{% endblock %}

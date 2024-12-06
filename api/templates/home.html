@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Tanday - Home Sharing Platform{% endblock %}
+
+{% block content %}
+    <main class="container-fluid container-xxl py-4">
+        <!-- Filters -->
+        <div class="d-flex gap-2 overflow-auto py-2 mb-4 " style="scrollbar-width: none; mar">
+            <button class="btn {% if filter_value == 'All' %}btn-purple{% else %}btn-light{% endif %} rounded-pill px-3 py-2 flex-shrink-0"
+                    onclick="filterHotel(event, '{% url 'home'%}')">
+                All Properties
+            </button>
+            {% for filter in filters %}
+                <button class="btn {% if filter_value == filter.name %}btn-purple{% else %}btn-light{% endif %} rounded-pill px-3 py-2 flex-shrink-0"
+                        onclick="filterHotel(event, '{% url 'filter_hotel' filter.name %}')">
+                    {{ filter.name }}
+                </button>
+            {% endfor %}
+        </div>
+
+        <!-- Listings Grid -->
+        <div class="row g-4">
+            {% for listing in listings %}
+            <div class="col-12 col-md-6 col-lg-4">
+                <a href="{% url 'booking' listing.id %}" class="text-decoration-none">
+                    <div class="card h-100 rounded-4 shadow-sm hover-lift">
+                        <!-- Image -->
+                        <div class="position-relative">
+                            <img src="{{ listing.image.url }}" 
+                                 class="card-img-top object-fit-cover rounded-top-4"
+                                 style="height: 240px;"
+                                 alt="{{ listing.title }}">
+                            <!-- Rating Badge -->
+                            <div class="position-absolute top-0 end-0 m-3">
+                                <div class="badge bg-white text-dark px-3 py-2 rounded-pill shadow-sm">
+                                    <i class="fas fa-star text-warning me-1"></i>
+                                    <span class="fw-semibold">{{ listing.avg_rating|floatformat:1|default:"0.0" }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    
+                        <!-- Content -->
+                        <div class="card-body d-flex flex-column gap-2">
+                            <h5 class="card-title fw-semibold mb-0 text-dark">{{ listing.title }}</h5>
+                            <div class="d-flex align-items-center gap-1">
+                                {% with rating=listing.avg_rating|default:0 %}
+                                    {% for i in "12345"|make_list %}
+                                        {% if forloop.counter <= rating %}
+                                            <i class="fas fa-star text-warning"></i>
+                                        {% elif forloop.counter|add:"-0.5" <= rating %}
+                                            <i class="fas fa-star-half-alt text-warning"></i>
+                                        {% else %}
+                                            <i class="far fa-star text-warning"></i>
+                                        {% endif %}
+                                    {% endfor %}
+                                    <span class="text-secondary ms-2">({{ listing.reviews_count|default:"0" }} reviews)</span>
+                                {% endwith %}
+                            </div>
+                            <p class="card-text text-secondary mb-0">
+                                {{ listing.description|truncatechars:100 }}
+                            </p>
+                            <div class="mt-auto pt-3">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <span class="fs-5 fw-semibold text-purple">₱{{ listing.price_per_night }}<small class="fs-6 fw-normal">/night</small></span>
+                                </div>
+                                <button class="btn btn-purple rounded-pill px-5 py-2 fs-5 fw-semibold w-100" onclick="event.filterHotel("{% url 'booking' listing.id %}")" >
+                                    Book now
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            {% empty %}
+                <h1>No one us here but us chickens.</h1>
+            {% endfor %}
+        </div>
+    </main>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        function filterHotel(event, url) {
+            event.preventDefault();
+            window.location.href = url;
+        }
+    </script>
+{% endblock %}
