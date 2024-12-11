@@ -180,6 +180,33 @@
           color:#0066cc;
         }
 
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 200px;
+            background-color: black;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -60px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+
         
     </style>
 {% endblock extra_css %}
@@ -217,19 +244,18 @@
                         {%if booking.status != 'Check-out'%}
                         <td style="display: flex;flex-direction: row; width: 130px;">
 
-                            <a href="{% url 'edit_booking' booking.id %}" class="action-link"><i class="bi bi-pencil-fill"></i></a>
+                            <a href="{% url 'edit_booking' booking.id %}" class="action-link" title="Edit"><i class="bi bi-pencil-fill"></i></a>
                             <!-- <a href="#" class="action-link" onclick="confirmDelete({{ booking.id }})"><i class="bi bi-trash3"></i></a> -->
                              <form method="POST" action="{% url 'accept' booking.id %}">
                                 {% csrf_token %}
                                 {%if booking.status == 'Accepted'%}
-                                <button type="submit" name="Check-In_button" class="status-btn "><i class="bi bi-check2-square"></i></button>
+                                <button type="submit" name="Check-In_button" class="status-btn" title="Check In"><i class="bi bi-check2-square"></i></button>
                                 {%endif%}
                                 {%if booking.status != 'Check-in' and booking.status != 'Check-out'%}
-                                <button type="submit" name="cancel-user_button"  class="status-btn "><i class="bi bi-x-octagon-fill"></i></button>
+                                <button type="submit" name="cancel-user_button" class="status-btn" title="Cancel"><i class="bi bi-x-octagon-fill"></i></button>
                                 {%endif%}
                                 {%if booking.status == 'Check-in'%}
-                                <button type="submit" name="check-out-user_button" class="status-btn "><i class="bi bi-luggage-fill"></i></button>
-                                
+                                <button type="submit" name="check-out-user_button" class="status-btn" title="Check Out"><i class="bi bi-luggage-fill"></i></button>
                                 {%endif%}
                             </form>
                         </td>

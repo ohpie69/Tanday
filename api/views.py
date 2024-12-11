@@ -346,30 +346,37 @@ def listings_view(request):
     filter_value = request.GET.get('filter', '')
     print("The filter value is:",filter_value)
     if filter_value:
-        listings = Listing.objects.filter(filters__name=filter_value)  # Assuming you have a ManyToMany relationship
+        listings = Listing.objects.filter(filters__name=filter_value)
     else:
         listings = Listing.objects.all()
    
     return render(request, 'home.html', {'listings': listings, 'search_query': request.GET.get('search', '')})
 
 #Just a try
-def filter_hotel_view(request,filter_value):
-    print("The filter value is:",filter_value)
+def filter_hotel_view(request, filter_value):
+    print("The filter value is:", filter_value)
     filters = Filter.objects.all()
-    if filter_value:
-        listings = Listing.objects.filter(filters__name=filter_value)  
     
+    if filter_value:
+        listings = Listing.objects.filter(filters__name=filter_value)
+    else:
+        listings = Listing.objects.all()
 
-    context = {'listings': listings,
-               'filters':filters, 
-               'search_query': request.GET.get('search', ''),
-               'filter_value':filter_value,
-               }
-    return render(request, 'home.html',context )
+    listings = listings.annotate(
+        avg_rating=Avg('reviews__rating'),
+        reviews_count=Count('reviews')
+    )
+
+    context = {
+        'listings': listings,
+        'filters': filters, 
+        'search_query': request.GET.get('search', ''),
+        'filter_value': filter_value,
+    }
+    return render(request, 'home.html', context)
 
 @login_required
 def update_listing(request, listing_id):
-    # Retrieve the listing based on the ID
     listing = get_object_or_404(Listing, id=listing_id, hotel_owner=request.user)
     
     if request.method == 'POST':
@@ -404,7 +411,6 @@ def edit_user(request):
         confirm_password = request.POST.get('confirm-password')
         stay_logged_in = request.POST.get('stay_logged_in') == 'true'
 
-        # Update user details
         user.username = username
         user.email = email
 
@@ -447,6 +453,7 @@ def review(request, booking_id):
             review.rating = rating
             review.save()
             booking.isReviewed = True
+            # booking.status = 'Check-out'
             booking.save()
             
             return redirect('home')
